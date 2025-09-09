@@ -12,6 +12,7 @@ global.env = process.env.NODE_ENV || "development";
 
 // Server routes
 const mhtRouter = require("./routes/mht.js");
+const hashRouter = require("./routes/hashGenerator.js");
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use(["/"], express.static("static"));
 app.use("/api/ping", (_, res) => res.status(200).send({ msg: "Pong", version: global.VERSION }));
 
 app.use("/api/mht", mhtRouter);
+app.use("/api/hash", hashRouter);
 
 // catch 404
 app.use((req, res, next) => {
@@ -99,6 +101,9 @@ const server = http.createServer(app);
 server.on("error", onError);
 server.on("listening", onListening);
 
-server.listen(global.PORT);
+const { makeBool } = require("./utils");
+if (process.env.NODE_ENV !== "test" && !makeBool(process.env.RUN_SERVER)) {
+    server.listen(global.PORT);
+}
 
 module.exports = app;
