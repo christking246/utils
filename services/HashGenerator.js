@@ -1,6 +1,6 @@
 const crypto = require('crypto');
 
-module.exports.generateHashes = async (str) => {
+module.exports.generateHashes = (str) => {
     try {
         return {
             success: true,

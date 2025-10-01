@@ -5,13 +5,13 @@ const service = require("../services/HashGenerator.js");
 const { isValidString } = require("../utils");
 
 router
-    .post("/", async (req, res) => {
+    .post("/", (req, res) => {
         if (!isValidString(req.body.text)) {
             // technically whitespace can be hashed, but we don't do that here
             return res.status(400).send({ msg: "invalid string provided" });
         }
 
-        const { success, hashes, msg } = await service.generateHashes(req.body.text);
+        const { success, hashes, msg } = service.generateHashes(req.body.text);
         if (success) {
             res.status(200).send({ hashes });
         } else {

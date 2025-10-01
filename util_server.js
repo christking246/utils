@@ -8,11 +8,11 @@ global.LOG_DIR = __dirname + "/logs";
 const morganLogger = require("./logger/morganLogger");
 const logger = require("./logger/index.js").setup();
 
-global.env = process.env.NODE_ENV || "development";
-
 // Server routes
 const mhtRouter = require("./routes/mht.js");
 const hashRouter = require("./routes/hashGenerator.js");
+
+const mcpRouter = require("./routes/mcp.js");
 
 const app = express();
 
@@ -20,6 +20,7 @@ app.use(morganLogger);
 app.use(express.json({ limit: '50mb' }));
 app.use(["/"], express.static("static"));
 app.use("/api/ping", (_, res) => res.status(200).send({ msg: "Pong", version: global.VERSION }));
+app.use("/mcp", mcpRouter);
 
 app.use("/api/mht", mhtRouter);
 app.use("/api/hash", hashRouter);
