@@ -20,27 +20,60 @@
         </header>
 
         <!-- Navigation Sidebar/up bar -->
-        <nav id="nav-sidebar" class="bg-stone-900 lg:border-r-1 lg:border-stone-700 text-stone-200 w-full lg:w-1/4 lg:block hidden
-            absolute lg:relative z-10 h-full lg:h-auto">
+        <nav id="nav-sidebar" class="bg-gradient-to-b from-stone-900 to-stone-950 lg:border-r border-stone-700/50 text-stone-100 
+            w-full lg:w-1/4 lg:block hidden absolute lg:relative z-10 h-full lg:h-auto shadow-2xl lg:shadow-none">
+            
+            <!-- Desktop Header -->
             <div class="hidden lg:block">
-                <h1 class="text-2xl font-bold p-4 border-b border-stone-700">Utils</h1>
+                <div class="p-6 border-b border-stone-700/50">
+                    <h1 class="text-2xl font-bold bg-gradient-to-r from-sky-400 to-blue-500 bg-clip-text text-transparent">
+                        Utils
+                    </h1>
+                    <p class="text-sm text-stone-400 mt-1">Developer Tools</p>
+                </div>
             </div>
-            <ul class="p-4 lg:p-0">
-                <li>
-                    <span data-tool="hash-generator" class="tool-nav-item block px-4 py-3 hover:bg-stone-700 cursor-pointer rounded lg:rounded-none">
-                        <span class="font-medium">Hash Generator</span>
-                        <span class="block text-sm text-stone-300 lg:hidden">Generate MD5, SHA1, SHA256, SHA512 hashes</span>
-                    </span>
-                </li>
-                <li>
-                    <span data-tool="fix-mht" class="tool-nav-item block px-4 py-3 hover:bg-sky-500 bg-sky-600
-                        cursor-pointer rounded lg:rounded-none">
-                        <span class="font-medium">Fix MHT</span>
-                        <span class="block text-sm text-stone-300 lg:hidden">Repair broken image links in MHT files</span>
-                    </span>
-                </li>
-                <!-- Add more tools here -->
-            </ul>
+            
+            <!-- Navigation Menu -->
+            <div class="p-4 lg:p-0">
+                <ul class="space-y-1 lg:space-y-0">
+                    <li>
+                        <span data-tool="hash-generator" class="tool-nav-item group flex items-center px-4 py-3 rounded-lg lg:rounded-none
+                            hover:bg-stone-700/70 cursor-pointer transition-all duration-200 border-l-4 border-transparent hover:border-sky-500">
+                            <svg class="w-5 h-5 mr-3 text-stone-400 group-hover:text-sky-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/>
+                            </svg>
+                            <div class="flex-1">
+                                <span class="font-medium text-stone-100 group-hover:text-white transition-colors">Hash Generator</span>
+                                <span class="block text-xs text-stone-400 lg:hidden mt-0.5">Generate MD5, SHA1, SHA256, SHA512 hashes</span>
+                            </div>
+                        </span>
+                    </li>
+                    
+                    <li>
+                        <span data-tool="fix-mht" class="tool-nav-item group flex items-center px-4 py-3 rounded-lg lg:rounded-none
+                            hover:bg-stone-700/70 cursor-pointer transition-all duration-200 border-l-4 border-transparent hover:border-sky-500">
+                            <svg class="w-5 h-5 mr-3 text-stone-400 group-hover:text-sky-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            <div class="flex-1">
+                                <span class="font-medium text-stone-100 group-hover:text-white transition-colors">Fix MHT</span>
+                                <span class="block text-xs text-stone-400 lg:hidden mt-0.5">Repair broken image links in MHT files</span>
+                            </div>
+                        </span>
+                    </li>
+
+                    <!-- Add more tools here -->
+                </ul>
+                
+                <!-- Footer for desktop -->
+                <div class="hidden lg:block mt-8 px-4 py-6 border-t border-stone-700/50">
+                    <div class="text-xs text-stone-500 space-y-1">
+                        <!-- TODO: pull version from api? -->
+                        <p>Version 1.0.0</p> 
+                        <p class="text-stone-600">© 2025 Utils</p>
+                    </div>
+                </div>
+            </div>
         </nav>
 
         <!-- Main Content Area -->
@@ -150,16 +183,17 @@
                     selectedTool.classList.remove("hidden");
                 }
 
-                // Update nav item styles
+                // Update nav item styles - remove active state from all items
                 toolNavItems.forEach(item => {
-                    item.classList.remove("bg-sky-600");
-                    item.classList.add("hover:bg-stone-700");
+                    item.classList.remove("bg-sky-600/20", "border-sky-500");
+                    item.classList.add("border-transparent");
                 });
                 
+                // Add active state to selected item
                 const activeNavItem = document.querySelector(`[data-tool="${toolId}"]`);
                 if (activeNavItem) {
-                    activeNavItem.classList.add("bg-sky-600");
-                    activeNavItem.classList.remove("hover:bg-stone-700");
+                    activeNavItem.classList.add("bg-sky-600/20", "border-sky-500");
+                    activeNavItem.classList.remove("border-transparent");
                 }
 
                 // Close mobile menu after selection
