@@ -5,7 +5,8 @@
   "main": "util_server.js",
   "scripts": {
     "start": "node util_server.js",
-    "test:api": "cross-env NODE_ENV=test jest test_server_api"
+    "test:api": "cross-env NODE_ENV=test jest test_server_api",
+    "test:integration": "cross-env NODE_ENV=test RUN_SERVER=true node util_server.js"
   },
   "keywords": [
     "tool",
