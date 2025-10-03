@@ -5,6 +5,7 @@
   "main": "util_server.js",
   "scripts": {
     "start": "node util_server.js",
+    "test:unit": "cross-env NODE_ENV=test jest test_server_unit",
     "test:api": "cross-env NODE_ENV=test jest test_server_api",
     "test:integration": "cross-env NODE_ENV=test RUN_SERVER=true node util_server.js"
   },
@@ -16,6 +17,7 @@
     "@modelcontextprotocol/sdk": "^1.16.0",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "jwt-decode": "^4.0.0",
     "morgan": "^1.10.0",
     "winston": "^3.17.0",
     "zod": "^3.25.76"
