@@ -2,6 +2,8 @@ const { McpServer } = require("@modelcontextprotocol/sdk/server/mcp.js");
 const { z } = require("zod");
 
 const { generateHashes } = require("./services/hashGenerator.js");
+const { decodeJwt } = require("./services/jwtDecoder.js");
+const { convertTime } = require("./services/timeConverter.js");
 
 const server = new McpServer({
     name: "util-server",
@@ -37,6 +39,50 @@ server.registerTool(
         else {
             return {
                 content: [{ type: "text", text: "An error occurred while generating the hashes " + msg }]
+            }
+        }
+    }
+);
+
+server.registerTool(
+    "jwtDecoder",
+    {
+        title: "JWT Decoder",
+        description: "Decodes a JWT token and returns its header and payload",
+        inputSchema: { token: z.string() }
+    },
+    ({ token }) => {
+        const { success, payload, header, msg } = decodeJwt(token);
+        if (success) {
+            return {
+                content: [{ type: "text", text: JSON.stringify({ header, payload }) }]
+            }
+        }
+        else {
+            return {
+                content: [{ type: "text", text: "An error occurred while decoding the token " + msg }]
+            }
+        }
+    }
+);
+
+server.registerTool(
+    "timeConverter",
+    {
+        title: "Time Converter",
+        description: "Converts a provided time input into ISO, UTC, and Unix timestamp formats",
+        inputSchema: { time: z.string() }
+    },
+    ({ time }) => {
+        const { success, msg, ...formats } = convertTime({ time });
+        if (success) {
+            return {
+                content: [{ type: "text", text: JSON.stringify(formats) }]
+            }
+        }
+        else {
+            return {
+                content: [{ type: "text", text: "An error occurred while converting the input time value " + msg }]
             }
         }
     }

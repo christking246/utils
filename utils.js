@@ -8,6 +8,10 @@ const isValidString = (value) => {
     return isDefined(value) && typeof value === "string" && value.trim() !== "";
 };
 
+const isNumber = (value) => {
+    return (typeof value === "number" || (typeof value === "string" && value !== "" && isFinite(Number(value)))) && !isNaN(value);
+};
+
 const makeBool = (value) => {
     if (!isDefined(value)) {
         return false;
@@ -31,5 +35,6 @@ const makeBool = (value) => {
 module.exports = {
     isDefined,
     isValidString,
-    makeBool
+    makeBool,
+    isNumber
 };
