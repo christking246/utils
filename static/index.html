@@ -65,6 +65,21 @@
                         </span>
                     </li>
 
+                    
+                    <li>
+                        <span data-tool="time-converter" class="tool-nav-item group flex items-center px-4 py-3 rounded-lg lg:rounded-none
+                            hover:bg-stone-700/70 cursor-pointer transition-all duration-200 border-l-4 border-transparent hover:border-sky-500">
+                            <svg class="w-5 h-5 mr-3 text-stone-400 group-hover:text-sky-400 transition-colors" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <div class="flex-1">
+                                <span class="font-medium text-stone-100 group-hover:text-white transition-colors">Time Converter</span>
+                                <span class="block text-xs text-stone-400 lg:hidden mt-0.5">Convert between timestamps, ISO, and UTC formats</span>
+                            </div>
+                        </span>
+                    </li>
+
                     <li>
                         <span data-tool="fix-mht" class="tool-nav-item group flex items-center px-4 py-3 rounded-lg lg:rounded-none
                             hover:bg-stone-700/70 cursor-pointer transition-all duration-200 border-l-4 border-transparent hover:border-sky-500">
@@ -136,6 +151,94 @@
                             <label class="block text-sm font-medium text-stone-300 mb-1">SHA512</label>
                             <input id="sha512-result" type="text" readonly class="w-full p-3 border border-stone-600 bg-stone-700
                                 text-stone-200 rounded font-mono text-sm" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Time Converter Tool -->
+            <div id="time-converter-tool" class="tool-content hidden">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-stone-200 mb-2">Time Converter</h2>
+                    <p class="text-stone-400">Convert between Unix timestamps, ISO format, and UTC strings. Supports both seconds and milliseconds timestamps.</p>
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label for="time-input" class="block text-sm font-medium text-stone-300 mb-2">Input Time</label>
+                        <input id="time-input" type="text" placeholder="Enter timestamp (1609459200 or 1609459200000) or date string (2023-01-01T00:00:00Z)" 
+                            class="w-full p-4 border border-stone-600 bg-stone-700 text-stone-200 rounded-lg" />
+                        <p class="text-xs text-stone-400 mt-1">Accepts Unix timestamps (seconds/milliseconds), ISO strings, or any valid date string</p>
+                    </div>
+                    
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="setCurrentTime()" class="px-4 py-2 bg-stone-600 hover:bg-stone-500 text-white text-sm
+                            font-medium rounded cursor-pointer">
+                            Use Current Time
+                        </button>
+                        <button onclick="clearTimeInput()" class="px-4 py-2 bg-stone-600 hover:bg-stone-500 text-white text-sm
+                            font-medium rounded cursor-pointer">
+                            Clear
+                        </button>
+                    </div>
+                    
+                    <button onclick="convertTime()" class="w-full lg:w-auto px-6 py-3 bg-sky-600 hover:bg-sky-500 text-white
+                        font-medium rounded-lg cursor-pointer">
+                        Convert Time
+                    </button>
+                    
+                    <!-- Error Display -->
+                    <div id="time-error" class="hidden p-4 border border-red-600 bg-red-900/20 text-red-400 rounded-lg">
+                        <div class="flex items-start">
+                            <svg class="w-5 h-5 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                            </svg>
+                            <div>
+                                <div class="font-medium">Conversion Error</div>
+                                <div id="time-error-message" class="text-sm mt-1"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Results  -->
+                    <div id="time-results" class="hidden space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="p-4 border border-stone-600 bg-stone-700 rounded-lg">
+                                <div class="text-xs font-medium text-stone-400 uppercase tracking-wide mb-2">Unix Timestamp (ms)</div>
+                                <div id="timestamp-result" class="text-stone-200 font-mono text-sm break-all">-</div>
+                                <button onclick="copyToClipboard('timestamp-result')" class="mt-2 text-xs text-sky-400 hover:text-sky-300 cursor-pointer">
+                                    Copy
+                                </button>
+                            </div>
+                            <div class="p-4 border border-stone-600 bg-stone-700 rounded-lg">
+                                <div class="text-xs font-medium text-stone-400 uppercase tracking-wide mb-2">ISO Format</div>
+                                <div id="iso-result" class="text-stone-200 font-mono text-sm break-all">-</div>
+                                <button onclick="copyToClipboard('iso-result')" class="mt-2 text-xs text-sky-400 hover:text-sky-300 cursor-pointer">
+                                    Copy
+                                </button>
+                            </div>
+                            <div class="p-4 border border-stone-600 bg-stone-700 rounded-lg">
+                                <div class="text-xs font-medium text-stone-400 uppercase tracking-wide mb-2">UTC String</div>
+                                <div id="utc-result" class="text-stone-200 font-mono text-sm break-all">-</div>
+                                <button onclick="copyToClipboard('utc-result')" class="mt-2 text-xs text-sky-400 hover:text-sky-300 cursor-pointer">
+                                    Copy
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Additional readable formats -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="p-4 border border-stone-600 bg-stone-700 rounded-lg">
+                                <div class="text-xs font-medium text-stone-400 uppercase tracking-wide mb-2">Local Time</div>
+                                <div id="local-result" class="text-stone-200 font-mono text-sm">-</div>
+                                <button onclick="copyToClipboard('local-result')" class="mt-2 text-xs text-sky-400 hover:text-sky-300 cursor-pointer">
+                                    Copy
+                                </button>
+                            </div>
+                            <div class="p-4 border border-stone-600 bg-stone-700 rounded-lg">
+                                <div class="text-xs font-medium text-stone-400 uppercase tracking-wide mb-2">Relative</div>
+                                <div id="relative-result" class="text-stone-200 font-mono text-sm">-</div>
+                            </div>
                         </div>
                     </div>
                 </div>

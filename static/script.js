@@ -1,3 +1,4 @@
+// mht functions
 function fixMht() {
     const fileInput = document.getElementById("file-input");
     const outputTextArea = document.getElementById("output");
@@ -7,8 +8,6 @@ function fixMht() {
         console.log("No file selected");
         return;
     }
-
-    console.log(fileInput.files[0].slice(0, -3));
 
     // reading this as text is probably not the best idea for large files
     // but it's good enough for now
@@ -45,6 +44,7 @@ function fixMht() {
     reader.readAsText(fileInput.files[0]);
 }
 
+// hash functions
 function generateHashes() {
     const input = document.getElementById("hash-input").value;
     if (!input.trim()) {
@@ -75,6 +75,7 @@ function generateHashes() {
     });
 }
 
+// jwt functions
 function decodeJwt() {
     const input = document.getElementById("jwt-input").value.trim();
     const resultsDiv = document.getElementById("jwt-results");
@@ -94,11 +95,10 @@ function decodeJwt() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token: input })
     })
-    .then(response => {
+    .then(async response => {
         if (!response.ok) {
-            return response.json().then(errorData => {
-                throw new Error(errorData.msg || "Failed to decode JWT token");
-            });
+            const errorData = await response.json();
+            throw new Error(errorData.msg || "Failed to decode JWT token");
         }
         return response.json();
     })
@@ -164,4 +164,129 @@ function showJwtError(message) {
         errorMessageDiv.textContent = message;
         errorDiv.classList.remove("hidden");
     }
+}
+
+// time functions
+function setCurrentTime() {
+    const timeInput = document.getElementById("time-input");
+    const now = Date.now();
+    timeInput.value = now.toString();
+}
+
+function clearTimeInput() {
+    const timeInput = document.getElementById("time-input");
+    timeInput.value = "";
+
+    // Hide results and error
+    document.getElementById("time-results").classList.add("hidden");
+    document.getElementById("time-error").classList.add("hidden");
+}
+
+function convertTime() {
+    const input = document.getElementById("time-input").value.trim();
+    const resultsDiv = document.getElementById("time-results");
+    const errorDiv = document.getElementById("time-error");
+
+    // Hide previous results and errors
+    resultsDiv.classList.add("hidden");
+    errorDiv.classList.add("hidden");
+
+    if (!input) {
+        showTimeError("Please enter a time value");
+        return;
+    }
+
+    fetch("/api/time/convert", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ time: input })
+    })
+    .then(async response => {
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.msg || "Failed to convert time");
+        }
+        return response.json();
+    })
+    .then(data => {
+        displayTimeResults(data);
+    })
+    .catch(error => {
+        showTimeError(error.message || "Network error occurred while converting time");
+    });
+}
+
+// TODO: unit test this?
+function getRelativeTime(timestamp) {
+    const now = Date.now();
+    const diffMs = now - timestamp;
+    const absDiff = Math.abs(diffMs);
+
+    // Define time units in milliseconds
+    const units = [
+        { name: 'year', ms: 365.25 * 24 * 60 * 60 * 1000 },
+        { name: 'month', ms: 30.44 * 24 * 60 * 60 * 1000 },
+        { name: 'week', ms: 7 * 24 * 60 * 60 * 1000 },
+        { name: 'day', ms: 24 * 60 * 60 * 1000 },
+        { name: 'hour', ms: 60 * 60 * 1000 },
+        { name: 'minute', ms: 60 * 1000 },
+        { name: 'second', ms: 1000 }
+    ];
+
+    // Find the appropriate unit
+    for (const unit of units) {
+        const value = Math.floor(absDiff / unit.ms);
+        if (value >= 1) {
+            const plural = value > 1 ? 's' : '';
+            const preposition = diffMs < 0 ? 'in ' : '';
+            const suffix = diffMs < 0 ? '' : ' ago';
+            return `${preposition}${value} ${unit.name}${plural}${suffix}`;
+        }
+    }
+
+    return 'just now';
+}
+
+function displayTimeResults(data) {
+    // Display the converted time formats
+    document.getElementById("timestamp-result").textContent = data.timestamp;
+    document.getElementById("iso-result").textContent = data.iso;
+    document.getElementById("utc-result").textContent = data.utc;
+
+    // Create a local time representation
+    const localTimeParts = new Date(data.timestamp).toLocaleString().split("/");
+
+    // Swap month and day to be have sane logical representation DD/MM/YYYY
+    localTimeParts.unshift(localTimeParts.splice(1, 1)[0]);
+    const localTime = localTimeParts.join("/");
+    document.getElementById("local-result").textContent = localTime;
+
+    // Calculate and display relative time
+    // should we keep updating this?
+    const relativeTime = getRelativeTime(data.timestamp);
+    document.getElementById("relative-result").textContent = relativeTime;
+
+    // Show results
+    document.getElementById("time-results").classList.remove("hidden");
+}
+
+function showTimeError(message) {
+    const errorDiv = document.getElementById("time-error");
+    const errorMessageDiv = document.getElementById("time-error-message");
+
+    if (errorDiv && errorMessageDiv) {
+        errorMessageDiv.textContent = message;
+        errorDiv.classList.remove("hidden");
+    }
+}
+
+function copyToClipboard(elementId) {
+    const element = document.getElementById(elementId);
+    const text = element.textContent;
+
+    navigator.clipboard.writeText(text).then(() => {
+        // Could add a toast notification here in the future
+    }).catch(err => {
+        console.error("Failed to copy to clipboard:", err);
+    });
 }
