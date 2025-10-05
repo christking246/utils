@@ -2,7 +2,7 @@ const logger = require("../logger").setup();
 
 const imgRegex = RegExp("<img[^>/]*src=['\"][^\"']+[\"'][^>/]*/?>", "sig");
 
-// Since the file is read into single string instead of multiple lines, we need 
+// Since the file is read into single string instead of multiple lines, we need
 // to jump around based on known structure of the file to find the base 64 components
 const findBase64Content = (str) => {
     const beginningTag = "--=_NextPart_SMP_";
@@ -72,8 +72,8 @@ module.exports.fixMht = async (contents) => {
         // TODO: update the data:image/jpeg;base64 to the correct type (for png)
         if (base64Images[i]) {
             contents = contents.replaceAll(imageTags[i] +"", `<img src="data:image/jpeg;base64,${base64Images[i].clean}">`);
-        }        
+        }
     }
 
-    return { success: true, contents };
+    return { success: true, contents, base64Images };
 }

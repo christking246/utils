@@ -10,9 +10,9 @@ router
             return res.status(400).send({ msg: "mht file is required" });
         }
 
-        const { success, contents, msg } = await service.fixMht(req.body.contents);
+        const { success, contents, base64Images, msg } = await service.fixMht(req.body.contents);
         if (success) {
-            res.status(200).send({ result: contents });
+            res.status(200).send({ result: contents, base64Images });
         } else {
             res.status(500).send({ msg: msg ?? "An error occurred trying to fix the provided mht file" });
         }

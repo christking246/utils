@@ -433,6 +433,16 @@
                         <textarea id="output" rows="15" class="w-full p-4 border border-stone-600 bg-stone-700 text-stone-200 rounded-lg font-mono
                             text-sm overflow-auto resize-y" placeholder="Fixed MHT content will appear here..." readonly></textarea>
                     </div>
+
+                    <!-- Images Display Section -->
+                    <div id="mht-images-section" class="hidden">
+                        <label class="block text-sm font-medium text-stone-300 mb-2">
+                            Extracted Images (<span id="image-count">0</span>)
+                        </label>
+                        <div id="mht-images-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 border border-stone-600 bg-stone-700 rounded-lg max-h-96 overflow-y-auto">
+                            <!-- Images will be dynamically added here -->
+                        </div>
+                    </div>
                     
                     <button id="download-btn" class="w-full lg:w-auto px-6 py-3 bg-sky-600 hover:bg-sky-500 disabled:bg-stone-600 cursor-pointer
                         disabled:cursor-not-allowed text-white font-medium rounded-lg" disabled>

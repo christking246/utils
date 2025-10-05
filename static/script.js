@@ -11,6 +11,10 @@ function fixMht() {
         return;
     }
 
+    // Clear previous results
+    outputTextArea.textContent = "";
+    document.getElementById("mht-images-section").classList.add("hidden");
+
     // reading this as text is probably not the best idea for large files
     // but it's good enough for now
     const reader = new FileReader();
@@ -26,6 +30,10 @@ function fixMht() {
         const data = await response.json();
         if (response.ok) {
             outputTextArea.textContent = data.result;
+
+            // Display extracted images if any
+            displayMhtImages(data.base64Images || []);
+
             downloadBtn.disabled = false;
             downloadBtn.onclick = function() {
                 const blob = new Blob([data.result], { type: "text/plain" });
@@ -41,9 +49,136 @@ function fixMht() {
         } else {
             // TODO: notification system?
             outputTextArea.textContent = data.msg || "An error occurred";
+            // Hide images section on error
+            document.getElementById("mht-images-section").classList.add("hidden");
         }
     }
     reader.readAsText(fileInput.files[0]);
+}
+
+function displayMhtImages(base64Images) {
+    const imagesSection = document.getElementById("mht-images-section");
+    const imagesContainer = document.getElementById("mht-images-container");
+    const imageCount = document.getElementById("image-count");
+
+    // Clear previous images
+    imagesContainer.innerHTML = "";
+
+    if (!base64Images || base64Images.length === 0) {
+        imagesSection.classList.add("hidden");
+        return;
+    }
+
+    // Update image count
+    imageCount.textContent = base64Images.length;
+
+    // Create image elements for each base64 image
+    base64Images.forEach((imageData, index) => {
+        const imageWrapper = document.createElement("div");
+        imageWrapper.className = "relative group";
+
+        // Determine image type from base64 signature
+        let mimeType = "image/jpeg"; // default
+        const base64Clean = imageData.clean || imageData;
+
+        if (base64Clean.startsWith("/9j/")) {
+            mimeType = "image/jpeg";
+        } else if (base64Clean.startsWith("iVBORw0KGgo")) {
+            mimeType = "image/png";
+        } else if (base64Clean.startsWith("R0lGOD")) {
+            mimeType = "image/gif";
+        } else if (base64Clean.startsWith("UklGR")) {
+            mimeType = "image/webp";
+        }
+
+        const dataUrl = `data:${mimeType};base64,${base64Clean}`;
+
+        imageWrapper.innerHTML = `
+            <div class="border border-stone-600 rounded-lg p-2 bg-stone-800 hover:bg-stone-750 transition-colors">
+                <img src="${dataUrl}"
+                    alt="Extracted image ${index + 1}"
+                    class="w-full h-32 object-contain rounded cursor-pointer hover:opacity-80 transition-opacity"
+                    onclick="viewFullImage('${dataUrl}', ${index + 1})" />
+                <div class="mt-2 text-xs text-stone-400 text-center">
+                    <span>Image ${index + 1}</span>
+                    <div class="flex justify-center gap-2 mt-1">
+                        <button onclick="downloadImage('${dataUrl}', ${index + 1})"
+                            class="cursor-pointer text-sky-400 hover:text-sky-300 transition-colors">
+                            Download
+                        </button>
+                        <span class="text-stone-600">|</span>
+                        <button onclick="copyImageBase64('${base64Clean}')"
+                            class="cursor-pointer text-sky-400 hover:text-sky-300 transition-colors">
+                            Copy Base64
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        imagesContainer.appendChild(imageWrapper);
+    });
+
+    // Show the images section
+    imagesSection.classList.remove("hidden");
+}
+
+function escListener (e) {
+    if (e.key === "Escape" || e.key === "Esc") {
+        closeFullImage();
+    }
+}
+
+function viewFullImage(dataUrl, imageIndex) {
+    // Create a modal-like overlay to view the full-size image
+    const overlay = document.createElement("div");
+    overlay.setAttribute("id", "image-overlay");
+    overlay.className = "fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4";
+
+    document.addEventListener("keydown", escListener);
+    overlay.innerHTML = `
+        <div class="relative max-w-full max-h-full">
+            <img src="${dataUrl}"
+                alt="Full size image ${imageIndex}"
+                class="max-w-full max-h-full object-contain rounded-lg shadow-2xl" />
+            <button onclick="closeFullImage()"
+                class="cursor-pointer absolute top-4 right-4 bg-red-800 hover:bg-red-700 text-white rounded-full p-2 transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+}
+
+function closeFullImage() {
+    const overlay = document.getElementById("image-overlay");
+    if (overlay) {
+        document.body.removeChild(overlay);
+    }
+    document.removeEventListener("keydown", escListener);
+}
+
+// TODO: is thi becoming a common util function?
+function downloadImage(dataUrl, imageIndex) {
+    // TODO: build from the original mht filename?
+    const link = document.createElement("a");
+    link.href = dataUrl;
+    link.download = `mht-extracted-image-${imageIndex}.jpg`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+function copyImageBase64(base64Data) {
+    navigator.clipboard.writeText(base64Data).then(() => {
+        // Could add a toast notification here in the future
+        console.log("Base64 data copied to clipboard");
+    }).catch(err => {
+        console.error("Failed to copy to clipboard:", err);
+    });
 }
 
 // hash functions
