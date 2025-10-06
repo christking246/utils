@@ -28,11 +28,11 @@ describe("time converter", () => {
         ["boolean input", true, "Time must be a valid number or string"],
         ["object input", {}, "Time must be a valid number or string"],
         ["array input", [], "Time must be a valid number or string"],
-        ["NaN input", NaN, "Time must be a valid number or string"],
+        ["NaN input", NaN, "No time provided"], // fun fact - NaN will stringify to null
     ])("should return bad request when %s", async (description, input, expectedMsg) => {
         const response = await superTestRequest.post("/api/time/convert").send({ time: input });
 
         expect(response.status).toBe(400);
-        expect(result.msg).toBe(expectedMsg);
+        expect(response.body.msg).toContain(expectedMsg);
     });
 });

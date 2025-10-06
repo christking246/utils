@@ -129,6 +129,7 @@ function escListener (e) {
     }
 }
 
+// TODO: allow navigation between images
 function viewFullImage(dataUrl, imageIndex) {
     // Create a modal-like overlay to view the full-size image
     const overlay = document.createElement("div");
@@ -190,7 +191,7 @@ function generateHashes() {
         return;
     }
 
-    fetch("/api/hash", {
+    fetch("/api/generator/hash", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: input })
@@ -687,5 +688,338 @@ function showImageBase64Error(message) {
     if (errorDiv && errorMessageDiv) {
         errorMessageDiv.textContent = message;
         errorDiv.classList.remove('hidden');
+    }
+}
+
+// GUID functions
+function generateGuids() {
+    const countInput = document.getElementById('guid-count');
+    const resultsDiv = document.getElementById('guid-results');
+    const errorDiv = document.getElementById('guid-error');
+
+    // Hide previous results and errors
+    resultsDiv.classList.add('hidden');
+    errorDiv.classList.add('hidden');
+
+    const count = parseInt(countInput.value);
+    if (!count || count < 1 || count > 100) {
+        showGuidError('Please enter a valid number between 1 and 100');
+        return;
+    }
+
+    fetch("/api/generator/guid/" + count, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.guids) {
+            displayGuidResults(data.guids);
+        } else {
+            showGuidError(data.msg || "Failed to generate GUIDs");
+        }
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        showGuidError("Network error occurred while generating GUIDs");
+    });
+}
+
+function displayGuidResults(guids) {
+    const guidList = document.getElementById('guid-list');
+    const guidCountResult = document.getElementById('guid-count-result');
+
+    // Clear previous results
+    guidList.innerHTML = '';
+
+    // Update count
+    guidCountResult.textContent = guids.length;
+
+    // Create GUID elements
+    guids.forEach((guid, index) => {
+        const guidWrapper = document.createElement('div');
+        guidWrapper.className = "flex items-center justify-between p-3 border border-stone-600 bg-stone-800 rounded-lg " +
+            "hover:bg-stone-750 transition-colors";
+
+        guidWrapper.innerHTML = `
+            <div class="flex-1">
+                <div class="text-stone-200 font-mono text-sm break-all">${guid}</div>
+                <div class="text-xs text-stone-400 mt-1">GUID ${index + 1}</div>
+            </div>
+            <button onclick="copyGuid('${guid}')" class="ml-3 px-3 py-1 text-xs text-sky-400 hover:text-sky-300
+                transition-colors cursor-pointer">
+                Copy
+            </button>
+        `;
+
+        guidList.appendChild(guidWrapper);
+    });
+
+    // Store guids for copy all
+    window.currentGuids = guids;
+
+    // Show results
+    document.getElementById('guid-results').classList.remove('hidden');
+}
+
+function copyGuid(guid) {
+    navigator.clipboard.writeText(guid).then(() => {
+        console.log("GUID copied to clipboard");
+    }).catch(err => {
+        console.error("Failed to copy to clipboard:", err);
+    });
+}
+
+function copyAllGuids() {
+    // TODO: find a solution without using global state
+    if (!window.currentGuids || window.currentGuids.length === 0) {
+        showGuidError("No GUIDs to copy");
+        return;
+    }
+
+    const allGuids = window.currentGuids.join('\n');
+    navigator.clipboard.writeText(allGuids).then(() => {
+        console.log("All GUIDs copied to clipboard");
+    }).catch(err => {
+        console.error("Failed to copy to clipboard:", err);
+    });
+}
+
+function clearGuidResults() {
+    document.getElementById('guid-count').value = '5';
+    document.getElementById('guid-results').classList.add('hidden');
+    document.getElementById('guid-error').classList.add('hidden');
+    window.currentGuids = [];
+}
+
+function showGuidError(message) {
+    const errorDiv = document.getElementById('guid-error');
+    const errorMessageDiv = document.getElementById('guid-error-message');
+
+    if (errorDiv && errorMessageDiv) {
+        errorMessageDiv.textContent = message;
+        errorDiv.classList.remove('hidden');
+    }
+}
+
+// CRON functions
+function parseCron() {
+    const cronInput = document.getElementById('cron-input');
+    const resultsDiv = document.getElementById('cron-results');
+    const errorDiv = document.getElementById('cron-error');
+
+    // Hide previous results and errors
+    resultsDiv.classList.add('hidden');
+    errorDiv.classList.add('hidden');
+
+    const expression = cronInput.value.trim();
+    if (!expression) {
+        showCronError('Please enter a CRON expression');
+        return;
+    }
+
+    fetch("/api/cron/describe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ expression: expression })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.description) {
+            displayCronResults(expression, data.description);
+        } else {
+            showCronError(data.msg || "Failed to parse CRON expression");
+        }
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        showCronError("Network error occurred while parsing CRON expression");
+    });
+}
+
+function displayCronResults(expression, description) {
+    // Display the human-readable description
+    document.getElementById('cron-description').textContent = description;
+
+    // Break down the CRON expression into parts
+    const parts = expression.split(' ');
+    const second = parts.length === 6 ? parts.shift() : null;
+    if (parts.length === 5) {
+        document.getElementById('cron-minute').textContent = parts[0] || '*';
+        document.getElementById('cron-hour').textContent = parts[1] || '*';
+        document.getElementById('cron-day').textContent = parts[2] || '*';
+        document.getElementById('cron-month').textContent = parts[3] || '*';
+        document.getElementById('cron-dow').textContent = parts[4] || '*';
+    }
+    document.getElementById('cron-second').textContent = second || '-';
+
+    // Show results
+    document.getElementById('cron-results').classList.remove('hidden');
+}
+
+function setCronExample(example) {
+    document.getElementById('cron-input').value = example;
+    parseCron();
+}
+
+function clearCronResults() {
+    document.getElementById('cron-input').value = '';
+    document.getElementById('cron-results').classList.add('hidden');
+    document.getElementById('cron-error').classList.add('hidden');
+}
+
+function showCronError(message) {
+    const errorDiv = document.getElementById('cron-error');
+    const errorMessageDiv = document.getElementById('cron-error-message');
+
+    if (errorDiv && errorMessageDiv) {
+        errorMessageDiv.textContent = message;
+        errorDiv.classList.remove('hidden');
+    }
+}
+
+// JSON/YAML Converter functions
+async function convertJsonToYaml() {
+    const jsonInput = document.getElementById('json-input').value.trim();
+
+    if (!jsonInput) {
+        showConversionError('Please enter JSON data to convert');
+        return;
+    }
+
+    // Validate JSON first
+    let jsonData;
+    try {
+        jsonData = JSON.parse(jsonInput);
+    } catch (e) {
+        showConversionError('Invalid JSON format: ' + e.message);
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/serialize/json/yml', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ json: jsonData })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            showConversionResult(data.ymlString);
+            hideConversionError();
+        } else {
+            showConversionError(data.msg || 'Failed to convert JSON to YAML');
+        }
+    } catch (error) {
+        showConversionError('Network error: ' + error.message);
+    }
+}
+
+async function convertYamlToJson() {
+    const yamlInput = document.getElementById('yaml-input').value.trim();
+
+    if (!yamlInput) {
+        showConversionError('Please enter YAML data to convert');
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/serialize/yml/json', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ yml: yamlInput })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            // Pretty print the JSON
+            const prettyJson = JSON.stringify(data.json, null, 4);
+            showConversionResult(prettyJson);
+            hideConversionError();
+        } else {
+            showConversionError(data.msg || 'Failed to convert YAML to JSON');
+        }
+    } catch (error) {
+        showConversionError('Network error: ' + error.message);
+    }
+}
+
+function showConversionResult(result) {
+    const resultsDiv = document.getElementById('conversion-results');
+    const outputTextarea = document.getElementById('conversion-output');
+
+    if (resultsDiv && outputTextarea) {
+        outputTextarea.value = result;
+        resultsDiv.classList.remove('hidden');
+    }
+}
+
+function showConversionError(message) {
+    const errorDiv = document.getElementById('conversion-error');
+    const errorMessageDiv = document.getElementById('conversion-error-message');
+
+    if (errorDiv && errorMessageDiv) {
+        errorMessageDiv.textContent = message;
+        errorDiv.classList.remove('hidden');
+
+        // Hide results on error
+        const resultsDiv = document.getElementById('conversion-results');
+        if (resultsDiv) {
+            resultsDiv.classList.add('hidden');
+        }
+    }
+}
+
+function hideConversionError() {
+    const errorDiv = document.getElementById('conversion-error');
+    if (errorDiv) {
+        errorDiv.classList.add('hidden');
+    }
+}
+
+function copyConversionResult() {
+    const outputTextarea = document.getElementById('conversion-output');
+    if (outputTextarea && outputTextarea.value) {
+        copyToClipboard('conversion-output');
+    }
+}
+
+function formatJson() {
+    const jsonInput = document.getElementById('json-input');
+    const inputValue = jsonInput.value.trim();
+
+    if (!inputValue) return;
+
+    try {
+        const parsed = JSON.parse(inputValue);
+        const formatted = JSON.stringify(parsed, null, 4); // TODO: make the indentation configurable?
+        jsonInput.value = formatted;
+        hideConversionError();
+    } catch (e) {
+        showConversionError('Invalid JSON format: ' + e.message);
+    }
+}
+
+function clearJsonInput() {
+    document.getElementById('json-input').value = '';
+    hideConversionError();
+    const resultsDiv = document.getElementById('conversion-results');
+    if (resultsDiv) {
+        resultsDiv.classList.add('hidden');
+    }
+}
+
+function clearYamlInput() {
+    document.getElementById('yaml-input').value = '';
+    hideConversionError();
+    const resultsDiv = document.getElementById('conversion-results');
+    if (resultsDiv) {
+        resultsDiv.classList.add('hidden');
     }
 }

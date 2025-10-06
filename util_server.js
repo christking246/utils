@@ -10,9 +10,11 @@ const logger = require("./logger/index.js").setup();
 
 // Server routes
 const mhtRouter = require("./routes/mht.js");
-const hashRouter = require("./routes/hashGenerator.js");
+const generatorsRouter = require("./routes/generators.js");
 const jwtRouter = require("./routes/jwtDecoder.js");
 const timeRouter = require("./routes/timeConverter.js");
+const serializationRouter = require("./routes/serialization.js");
+const cronRouter = require("./routes/cron.js");
 
 const mcpRouter = require("./routes/mcp.js");
 
@@ -25,9 +27,11 @@ app.use("/api/ping", (_, res) => res.status(200).send({ msg: "Pong", version: gl
 app.use("/mcp", mcpRouter);
 
 app.use("/api/mht", mhtRouter);
-app.use("/api/hash", hashRouter);
+app.use("/api/generator", generatorsRouter);
 app.use("/api/jwt", jwtRouter);
 app.use("/api/time", timeRouter);
+app.use("/api/serialize", serializationRouter);
+app.use("/api/cron", cronRouter);
 
 if (process.env.NODE_ENV === "test") {
     app.use("/", (_, res) => res.status(200).send({ msg: "Ok" })); // return 200 as health check for playwright

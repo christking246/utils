@@ -1,7 +1,7 @@
 const { McpServer } = require("@modelcontextprotocol/sdk/server/mcp.js");
 const { z } = require("zod");
 
-const { generateHashes } = require("./services/hashGenerator.js");
+const { generateHashes } = require("./services/Generators.js");
 const { decodeJwt } = require("./services/jwtDecoder.js");
 const { convertTime } = require("./services/timeConverter.js");
 

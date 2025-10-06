@@ -2,7 +2,7 @@ const { isDefined, isNumber, isValidString } = require("../utils");
 
 module.exports.convertTime = ({ time }) => {
     if (!isDefined(time)) {
-        return { success: false, msg: "No time provided" };
+        return { success: false, code: 400, msg: "No time provided" };
     }
 
     let parseDate = null;
@@ -18,7 +18,7 @@ module.exports.convertTime = ({ time }) => {
 
         parseDate = new Date(time);
         if (isNaN(parseDate.getTime())) {
-            return { success: false, msg: "Invalid timestamp number" };
+            return { success: false, code: 400, msg: "Invalid timestamp number" };
         }
     }
 
@@ -26,12 +26,12 @@ module.exports.convertTime = ({ time }) => {
     if (isValidString(time)) {
         parseDate = new Date(time);
         if (isNaN(parseDate.getTime())) {
-            return { success: false, msg: "Invalid date string" };
+            return { success: false, code: 400, msg: "Invalid date string" };
         }
     }
 
     if (parseDate === null) {
-        return { success: false, msg: "Time must be a valid number or string" };
+        return { success: false, code: 400, msg: "Time must be a valid number or string" };
     }
 
     return {
