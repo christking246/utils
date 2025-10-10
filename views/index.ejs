@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Utils</title>
+        <script src="script.js" defer></script>
+        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    </head>
+    <!-- for now this is server rendered, will update to use client rendering when this gets more tools/complicated -->
+    <!-- Is it time to consider a client-side framework / template engine yet? -->
+    <body class="flex flex-col lg:flex-row h-screen">
+        <!-- Mobile Header with Hamburger Menu which is hidden as the screen gets bigger (desktop sizes) -->
+        <header class="bg-stone-900 text-stone-200 lg:hidden flex items-center justify-between p-4 border-b border-stone-700">
+            <h1 class="text-xl font-bold">Utils</h1>
+            <button id="mobile-menu-btn" class="p-2 hover:bg-stone-700 rounded">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+        </header>
+
+        <!-- Navigation Sidebar/up bar -->
+        <nav id="nav-sidebar" class="bg-gradient-to-b from-stone-900 to-stone-950 lg:border-r border-stone-700/50 text-stone-100
+            w-full lg:w-1/4 lg:block hidden absolute lg:relative z-10 h-full lg:h-auto shadow-2xl lg:shadow-none">
+
+            <!-- Desktop Header -->
+            <div class="hidden lg:block">
+                <div class="p-6 border-b border-stone-700/50">
+                    <h1 class="text-2xl font-bold bg-gradient-to-r from-sky-400 to-blue-500 bg-clip-text text-transparent">
+                        Utils
+                    </h1>
+                    <p class="text-sm text-stone-400 mt-1">Developer Tools</p>
+                </div>
+            </div>
+
+            <!-- Navigation Menu -->
+            <%- include("partials/navMenuItems"); %>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 bg-stone-800 p-4 overflow-auto">
+            <%- include("partials/hashTool"); %>
+
+            <%- include("partials/timeTool"); %>
+
+            <%- include("partials/base64Tool"); %>
+
+            <%- include("partials/mhtTool"); %>
+
+            <%- include("partials/jwtTool"); %>
+
+            <%- include("partials/guidTool"); %>
+
+            <%- include("partials/cronTool"); %>
+
+            <%- include("partials/serialConverterTool"); %>
+        </main>
+
+        <!-- Wondering whether to put this in a separate js file and have this be purely an html file (with tailwind ofc) or keep here since this
+            is technically part of init
+        -->
+        <script>
+            // Mobile menu functionality
+            const mobileMenuBtn = document.getElementById("mobile-menu-btn");
+            const navSidebar = document.getElementById("nav-sidebar");
+            const toolNavItems = document.querySelectorAll(".tool-nav-item");
+            const toolContents = document.querySelectorAll(".tool-content");
+
+            if (mobileMenuBtn) {
+                mobileMenuBtn.addEventListener("click", () => navSidebar.classList.toggle("hidden"));
+            }
+
+            function closeMobileMenu() {
+                navSidebar.classList.add("hidden");
+            }
+
+            // Switch active tool
+            function switchTool(toolId) {
+                // Hide all tools
+                toolContents.forEach(content => content.classList.add("hidden"));
+
+                // Show selected tool
+                const selectedTool = document.getElementById(toolId + "-tool");
+                if (selectedTool) {
+                    selectedTool.classList.remove("hidden");
+                }
+
+                // Update nav item styles - remove active state from all items
+                toolNavItems.forEach(item => {
+                    item.classList.remove("bg-sky-600/20", "border-sky-500");
+                    item.classList.add("border-transparent");
+                });
+
+                // Add active state to selected item
+                const activeNavItem = document.querySelector(`[data-tool="${toolId}"]`);
+                if (activeNavItem) {
+                    activeNavItem.classList.add("bg-sky-600/20", "border-sky-500");
+                    activeNavItem.classList.remove("border-transparent");
+                }
+
+                // Close mobile menu after selection
+                closeMobileMenu();
+            }
+
+            // Tool navigation event listeners
+            toolNavItems.forEach(item => {
+                item.addEventListener("click", () => {
+                    const toolId = item.getAttribute("data-tool");
+                    switchTool(toolId);
+                });
+            });
+
+            // Initialize with first tool active
+            switchTool("hash-generator");
+        </script>
+    </body>
+</html>

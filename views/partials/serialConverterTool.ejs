@@ -1,0 +1,78 @@
+<div id="json-yaml-converter-tool" class="tool-content hidden">
+    <div class="mb-6">
+        <!-- TODO change the title when we start adding more conversion pairs? -->
+        <h2 class="text-2xl font-bold text-stone-200 mb-2">JSON ⇄ YAML Converter</h2>
+        <p class="text-stone-400">Convert between JSON and YAML formats with validation and formatting.</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- JSON to YAML -->
+        <div class="space-y-4">
+            <div class="flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-stone-200">JSON Input</h3>
+                <div class="flex gap-2">
+                    <button onclick="formatJson()" class="px-3 py-1 text-xs bg-stone-600 hover:bg-stone-500 text-white rounded">
+                        Format JSON
+                    </button>
+                    <button id="json-clear" onclick="clearJsonInput()"
+                        class="px-3 py-1 text-xs bg-stone-600 hover:bg-stone-500 text-white rounded">
+                        Clear
+                    </button>
+                </div>
+            </div>
+            <textarea id="json-input" rows="12" placeholder='{"name": "example", "value": 123}'
+                class="w-full p-4 border border-stone-600 bg-stone-700 text-stone-200 rounded-lg font-mono text-sm resize-y"></textarea>
+            <button onclick="convertJsonToYaml()" class="w-full px-6 py-3 bg-sky-600 hover:bg-sky-500 text-white font-medium rounded-lg">
+                Convert to YAML →
+            </button>
+        </div>
+
+        <!-- YAML to JSON -->
+        <div class="space-y-4">
+            <div class="flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-stone-200">YAML Input</h3>
+                <div class="flex gap-2">
+                    <button id="yml-clear" onclick="clearYamlInput()"
+                        class="px-3 py-1 text-xs bg-stone-600 hover:bg-stone-500 text-white rounded">
+                        Clear
+                    </button>
+                </div>
+            </div>
+            <textarea id="yaml-input" rows="12" placeholder="name: example&#10;value: 123"
+                class="w-full p-4 border border-stone-600 bg-stone-700 text-stone-200 rounded-lg font-mono text-sm resize-y"></textarea>
+            <button onclick="convertYamlToJson()" class="w-full px-6 py-3 bg-green-600 hover:bg-green-500 text-white font-medium rounded-lg">
+                ← Convert to JSON
+            </button>
+        </div>
+    </div>
+
+    <!-- Results Section -->
+    <div id="conversion-results" class="hidden mt-8 space-y-4">
+        <div class="flex items-center justify-between">
+            <h3 class="text-lg font-semibold text-stone-200">Conversion Result</h3>
+            <button id="serialize-copy-result" onclick="copyConversionResult()"
+                class="px-4 py-2 text-sm bg-stone-600 hover:bg-stone-500 text-white rounded">
+                Copy Result
+            </button>
+        </div>
+        <div class="relative">
+            <textarea id="conversion-output" rows="20" readonly
+                class="w-full p-4 border border-stone-600 bg-stone-700 text-stone-200 rounded-lg font-mono text-sm resize-y"></textarea>
+        </div>
+    </div>
+
+    <!-- Error Display -->
+    <div id="conversion-error" class="hidden mt-6 p-4 border border-red-600 bg-red-900/20 text-red-400 rounded-lg">
+        <div class="flex items-start">
+            <svg class="w-5 h-5 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293
+                    1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10
+                    8.586 8.707 7.293z" clip-rule="evenodd"/>
+            </svg>
+            <div>
+                <div class="font-medium">Conversion Error</div>
+                <div id="conversion-error-message" class="text-sm mt-1"></div>
+            </div>
+        </div>
+    </div>
+</div>

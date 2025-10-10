@@ -1,0 +1,38 @@
+<div id="fix-mht-tool" class="tool-content">
+    <div class="mb-6">
+        <h2 class="text-2xl font-bold text-stone-200 mb-2">Fix MHT Files</h2>
+        <p class="text-stone-400">Upload an MHT file to repair broken image links by converting them to embedded base64 images.</p>
+    </div>
+
+    <div class="space-y-4">
+        <div>
+            <label for="file-input" class="block text-sm font-medium text-stone-300 mb-2">Select MHT File</label>
+            <input type="file" id="file-input" accept=".mht,.mhtml" onchange="fixMht()"
+                class="block w-full p-3 border border-stone-600 bg-stone-700 text-stone-200 rounded-lg
+                    file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium
+                    file:bg-sky-600 file:text-white hover:file:bg-sky-500 cursor-pointer" />
+        </div>
+
+        <div>
+            <label for="output" class="block text-sm font-medium text-stone-300 mb-2">Output</label>
+            <textarea id="output" rows="15" class="w-full p-4 border border-stone-600 bg-stone-700 text-stone-200 rounded-lg font-mono
+                text-sm overflow-auto resize-y" placeholder="Fixed MHT content will appear here..." readonly></textarea>
+        </div>
+
+        <!-- Images Display Section -->
+        <div id="mht-images-section" class="hidden">
+            <label class="block text-sm font-medium text-stone-300 mb-2">
+                Extracted Images (<span id="image-count">0</span>)
+            </label>
+            <div id="mht-images-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 border border-stone-600
+                bg-stone-700 rounded-lg max-h-96 overflow-y-auto">
+                <!-- Images will be dynamically added here -->
+            </div>
+        </div>
+
+        <button id="download-btn" class="w-full lg:w-auto px-6 py-3 bg-sky-600 hover:bg-sky-500 disabled:bg-stone-600 cursor-pointer
+            disabled:cursor-not-allowed text-white font-medium rounded-lg" disabled>
+            Download Fixed File
+        </button>
+    </div>
+</div>

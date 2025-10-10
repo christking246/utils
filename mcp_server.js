@@ -1,9 +1,10 @@
 const { McpServer } = require("@modelcontextprotocol/sdk/server/mcp.js");
 const { z } = require("zod");
 
-const { generateHashes } = require("./services/Generators.js");
-const { decodeJwt } = require("./services/jwtDecoder.js");
-const { convertTime } = require("./services/timeConverter.js");
+const { generateHashes, generateGuid } = require("./services/Generators.js");
+const { decodeJwt } = require("./services/JwtDecoder.js");
+const { convertTime } = require("./services/TimeConverter.js");
+const { describeCron } = require("./services/Cron.js");
 
 const server = new McpServer({
     name: "util-server",
@@ -83,6 +84,50 @@ server.registerTool(
         else {
             return {
                 content: [{ type: "text", text: "An error occurred while converting the input time value " + msg }]
+            }
+        }
+    }
+);
+
+server.registerTool(
+    "guid",
+    {
+        title: "Generate GUIDs",
+        description: "Generates one or more GUIDs (Globally Unique Identifiers)",
+        inputSchema: { count: z.number().optional() }
+    },
+    ({ count }) => {
+        const { success, guids, msg } = generateGuid(count ?? 1);
+        if (success) {
+            return {
+                content: [{ type: "text", text: JSON.stringify(guids) }]
+            }
+        }
+        else {
+            return {
+                content: [{ type: "text", text: "An error occurred while generating Guids " + msg }]
+            }
+        }
+    }
+);
+
+server.registerTool(
+    "cron",
+    {
+        title: "Describe Cron Expression",
+        description: "Provides a human-readable description of a given cron expression",
+        inputSchema: { expression: z.string() }
+    },
+    ({ expression }) => {
+        const { success, description, msg } = describeCron(expression);
+        if (success) {
+            return {
+                content: [{ type: "text", text: JSON.stringify(description) }]
+            }
+        }
+        else {
+            return {
+                content: [{ type: "text", text: "An error occurred while describing cron expression " + msg }]
             }
         }
     }

@@ -1,0 +1,124 @@
+<div id="cron-parser-tool" class="tool-content hidden">
+    <div class="mb-6">
+        <h2 class="text-2xl font-bold text-stone-200 mb-2">CRON Parser</h2>
+        <p class="text-stone-400">Parse and describe CRON expressions in human-readable format.
+            Understand when your scheduled tasks will run. (Seconds are optional)</p>
+    </div>
+
+    <div class="space-y-4">
+        <div>
+            <label for="cron-input" class="block text-sm font-medium text-stone-300 mb-2">CRON Expression</label>
+            <input id="cron-input" type="text" placeholder="Enter CRON expression (e.g., 0 15 * * 1-5)"
+                class="w-full p-4 border border-stone-600 bg-stone-700 text-stone-200 rounded-lg font-mono" />
+            <p class="text-xs text-stone-400 mt-1">Format: minute hour day month day-of-week (e.g., 0 9 * * MON-FRI)</p>
+        </div>
+
+        <div class="flex flex-wrap gap-2">
+            <button onclick="parseCron()" class="px-6 py-3 bg-sky-600 hover:bg-sky-500 text-white
+                font-medium rounded-lg cursor-pointer">
+                Parse Expression
+            </button>
+            <button id="clear-cron" onclick="clearCronResults()" class="px-4 py-2 bg-stone-600 hover:bg-stone-500 text-white text-sm
+                font-medium rounded cursor-pointer">
+                Clear
+            </button>
+        </div>
+
+        <!-- Example expressions -->
+        <div class="p-4 border border-stone-600 bg-stone-700 rounded-lg">
+            <h3 class="text-sm font-medium text-stone-300 mb-2">Common Examples</h3>
+            <div class="space-y-2 text-sm">
+                <div class="flex items-center justify-between">
+                    <code class="text-sky-300 bg-stone-800 px-2 py-1 rounded">0 9 * * MON-FRI</code>
+                    <button id="weekday-morning-example" onclick="setCronExample('0 9 * * MON-FRI')"
+                        class="text-xs text-sky-400 hover:text-sky-300 cursor-pointer">Use</button>
+                </div>
+                <div class="flex items-center justify-between">
+                    <code class="text-sky-300 bg-stone-800 px-2 py-1 rounded">0 0 1 * *</code>
+                    <button id="monthly-example" onclick="setCronExample('0 0 1 * *')"
+                        class="text-xs text-sky-400 hover:text-sky-300 cursor-pointer">Use</button>
+                </div>
+                <div class="flex items-center justify-between">
+                    <code class="text-sky-300 bg-stone-800 px-2 py-1 rounded">*/15 * * * *</code>
+                    <button id="every-15-minutes-example" onclick="setCronExample('*/15 * * * *')"
+                        class="text-xs text-sky-400 hover:text-sky-300 cursor-pointer">Use</button>
+                </div>
+                <div class="flex items-center justify-between">
+                    <code class="text-sky-300 bg-stone-800 px-2 py-1 rounded">0 0 0 * * 0</code>
+                    <button id="weekly-example" onclick="setCronExample('0 0 0 * * 0')"
+                        class="text-xs text-sky-400 hover:text-sky-300 cursor-pointer">Use</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error Display -->
+        <div id="cron-error" class="hidden p-4 border border-red-600 bg-red-900/20 text-red-400 rounded-lg">
+            <div class="flex items-start">
+                <svg class="w-5 h-5 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293
+                        1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10
+                        8.586 8.707 7.293z" clip-rule="evenodd"/>
+                </svg>
+                <div>
+                    <div class="font-medium">Parsing Error</div>
+                    <div id="cron-error-message" class="text-sm mt-1"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="cron-results" class="hidden space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-stone-300 mb-2">
+                    <svg class="w-4 h-4 mr-2 text-stone-400 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0
+                            11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    Description
+                </label>
+                <div class="p-4 border border-stone-600 bg-stone-700 rounded-lg">
+                    <div id="cron-description" class="text-stone-200 text-base leading-relaxed"></div>
+                    <button onclick="copyToClipboard('cron-description')" class="mt-3 text-xs text-sky-400 hover:text-sky-300 cursor-pointer">
+                        Copy Description
+                    </button>
+                </div>
+            </div>
+
+            <!-- CRON Format Breakdown -->
+            <div>
+                <label class="block text-sm font-medium text-stone-300 mb-2">
+                    <svg class="w-4 h-4 mr-2 text-stone-400 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v6a2 2 0 002
+                            2h6l3-3V7a2 2 0 00-2-2h-4z"/>
+                    </svg>
+                    Expression Breakdown
+                </label>
+                <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
+                    <div class="p-3 border border-stone-600 bg-stone-700 rounded-lg text-center">
+                        <div class="text-xs font-medium text-stone-400 uppercase tracking-wide mb-1">Second</div>
+                        <div id="cron-second" class="text-stone-200 font-mono text-sm">-</div>
+                    </div>
+                    <div class="p-3 border border-stone-600 bg-stone-700 rounded-lg text-center">
+                        <div class="text-xs font-medium text-stone-400 uppercase tracking-wide mb-1">Minute</div>
+                        <div id="cron-minute" class="text-stone-200 font-mono text-sm">-</div>
+                    </div>
+                    <div class="p-3 border border-stone-600 bg-stone-700 rounded-lg text-center">
+                        <div class="text-xs font-medium text-stone-400 uppercase tracking-wide mb-1">Hour</div>
+                        <div id="cron-hour" class="text-stone-200 font-mono text-sm">-</div>
+                    </div>
+                    <div class="p-3 border border-stone-600 bg-stone-700 rounded-lg text-center">
+                        <div class="text-xs font-medium text-stone-400 uppercase tracking-wide mb-1">Day</div>
+                        <div id="cron-day" class="text-stone-200 font-mono text-sm">-</div>
+                    </div>
+                    <div class="p-3 border border-stone-600 bg-stone-700 rounded-lg text-center">
+                        <div class="text-xs font-medium text-stone-400 uppercase tracking-wide mb-1">Month</div>
+                        <div id="cron-month" class="text-stone-200 font-mono text-sm">-</div>
+                    </div>
+                    <div class="p-3 border border-stone-600 bg-stone-700 rounded-lg text-center">
+                        <div class="text-xs font-medium text-stone-400 uppercase tracking-wide mb-1">Day of Week</div>
+                        <div id="cron-dow" class="text-stone-200 font-mono text-sm">-</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

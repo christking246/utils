@@ -1,0 +1,42 @@
+<div id="hash-generator-tool" class="tool-content hidden">
+    <div class="mb-6">
+        <h2 class="text-2xl font-bold text-stone-200 mb-2">Hash Generator</h2>
+        <p class="text-stone-400">Generate MD5, SHA1, SHA256, and SHA512 hashes for any text input.</p>
+    </div>
+
+    <div class="space-y-4">
+        <div>
+            <label for="hash-input" class="block text-sm font-medium text-stone-300 mb-2">Input Text</label>
+            <textarea id="hash-input" rows="4" placeholder="Enter text to generate hashes..." class="w-full p-4 border
+                border-stone-600 bg-stone-700 text-stone-200 rounded-lg resize-y"></textarea>
+        </div>
+
+        <button id="generate-hashes" onclick="generateHashes()" class="w-full lg:w-auto px-6 py-3 bg-sky-600 hover:bg-sky-500 text-white
+            font-medium rounded-lg cursor-pointer">
+            Generate Hashes
+        </button>
+
+        <div id="hash-results" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-stone-300 mb-1">MD5</label>
+                <input id="md5-result" type="text" readonly class="w-full p-3 border border-stone-600 bg-stone-700
+                    text-stone-200 rounded font-mono text-sm" />
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-stone-300 mb-1">SHA1</label>
+                <input id="sha1-result" type="text" readonly class="w-full p-3 border border-stone-600 bg-stone-700
+                    text-stone-200 rounded font-mono text-sm" />
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-stone-300 mb-1">SHA256</label>
+                <input id="sha256-result" type="text" readonly class="w-full p-3 border border-stone-600 bg-stone-700
+                    text-stone-200 rounded font-mono text-sm" />
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-stone-300 mb-1">SHA512</label>
+                <input id="sha512-result" type="text" readonly class="w-full p-3 border border-stone-600 bg-stone-700
+                    text-stone-200 rounded font-mono text-sm" />
+            </div>
+        </div>
+    </div>
+</div>

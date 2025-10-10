@@ -1,0 +1,56 @@
+<div id="guid-generator-tool" class="tool-content hidden">
+    <div class="mb-6">
+        <h2 class="text-2xl font-bold text-stone-200 mb-2">GUID Generator</h2>
+        <p class="text-stone-400">Generate unique identifiers (GUIDs/UUIDs) for use in applications, databases, and systems.</p>
+    </div>
+
+    <div class="space-y-4">
+        <div>
+            <label for="guid-count" class="block text-sm font-medium text-stone-300 mb-2">Number of GUIDs to Generate</label>
+            <input id="guid-count" type="number" min="1" max="100" value="5"
+                class="w-full lg:w-32 p-3 border border-stone-600 bg-stone-700 text-stone-200 rounded-lg" />
+            <p class="text-xs text-stone-400 mt-1">Generate between 1 and 100 GUIDs at once</p>
+        </div>
+
+        <div class="flex flex-wrap gap-2">
+            <button onclick="generateGuids()" class="px-6 py-3 bg-sky-600 hover:bg-sky-500 text-white
+                font-medium rounded-lg cursor-pointer">
+                Generate GUIDs
+            </button>
+            <button id="clear-guid" onclick="clearGuidResults()" class="px-4 py-2 bg-stone-600 hover:bg-stone-500 text-white text-sm
+                font-medium rounded cursor-pointer">
+                Clear
+            </button>
+        </div>
+
+        <!-- Error Display -->
+        <div id="guid-error" class="hidden p-4 border border-red-600 bg-red-900/20 text-red-400 rounded-lg">
+            <div class="flex items-start">
+                <svg class="w-5 h-5 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293
+                        1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10
+                        8.586 8.707 7.293z" clip-rule="evenodd"/>
+                </svg>
+                <div>
+                    <div class="font-medium">Generation Error</div>
+                    <div id="guid-error-message" class="text-sm mt-1"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="guid-results" class="hidden space-y-4">
+            <div class="flex items-center justify-between">
+                <label class="block text-sm font-medium text-stone-300">
+                    Generated GUIDs (<span id="guid-count-result">0</span>)
+                </label>
+                <button onclick="copyAllGuids()" class="text-xs text-sky-400 hover:text-sky-300 cursor-pointer">
+                    Copy All
+                </button>
+            </div>
+
+            <div id="guid-list" class="space-y-2 max-h-150 overflow-y-auto p-4 border border-stone-600 bg-stone-700 rounded-lg">
+                <!-- GUIDs will be dynamically added here -->
+            </div>
+        </div>
+    </div>
+</div>

@@ -33,9 +33,8 @@ app.use("/api/time", timeRouter);
 app.use("/api/serialize", serializationRouter);
 app.use("/api/cron", cronRouter);
 
-if (process.env.NODE_ENV === "test") {
-    app.use("/", (_, res) => res.status(200).send({ msg: "Ok" })); // return 200 as health check for playwright
-}
+app.set("view engine", "ejs");
+app.get("/", (_, res) => res.render("index"));
 
 // catch 404
 app.use((req, res, next) => {

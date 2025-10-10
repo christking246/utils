@@ -1,0 +1,151 @@
+<div id="base64-encoder-tool" class="tool-content hidden">
+    <div class="mb-6">
+        <h2 class="text-2xl font-bold text-stone-200 mb-2">Base64 Encoder/Decoder</h2>
+        <p class="text-stone-400">
+            Encode and decode text and images to/from Base64 format. All processing is done locally in your browser.</p>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div class="flex mb-6 border-b border-stone-600">
+        <button id="text-tab" onclick="switchBase64Tab('text')" class="base64-tab-btn px-6 py-3 text-sm font-medium text-stone-300
+            border-b-2 border-sky-500 text-sky-400 cursor-pointer">
+            Text
+        </button>
+        <button id="image-tab" onclick="switchBase64Tab('image')" class="base64-tab-btn px-6 py-3 text-sm font-medium text-stone-400
+            border-b-2 border-transparent hover:text-stone-300 cursor-pointer">
+            Image
+        </button>
+    </div>
+
+    <!-- Text Encoder/Decoder -->
+    <div id="text-base64" class="base64-content">
+        <div class="space-y-4">
+            <div>
+                <label for="text-input" class="block text-sm font-medium text-stone-300 mb-2">Input</label>
+                <textarea id="text-input" rows="6" placeholder="Enter text to encode or paste Base64 to decode..."
+                    class="w-full p-4 border border-stone-600 bg-stone-700 text-stone-200 rounded-lg resize-y"></textarea>
+            </div>
+
+            <div class="flex flex-wrap gap-2">
+                <button onclick="encodeText()" class="px-4 py-2 bg-sky-600 hover:bg-sky-500 text-white text-sm
+                    font-medium rounded cursor-pointer">
+                    Encode to Base64
+                </button>
+                <button onclick="decodeText()" class="px-4 py-2 bg-green-600 hover:bg-green-500 text-white text-sm
+                    font-medium rounded cursor-pointer">
+                    Decode from Base64
+                </button>
+                <button onclick="clearTextBase64()" class="px-4 py-2 bg-stone-600 hover:bg-stone-500 text-white text-sm
+                    font-medium rounded cursor-pointer">
+                    Clear
+                </button>
+            </div>
+
+            <div>
+                <label for="base64-output" class="block text-sm font-medium text-stone-300 mb-2">Output</label>
+                <textarea id="base64-output" rows="6" readonly
+                    class="w-full p-4 border border-stone-600 bg-stone-700 text-stone-200 rounded-lg resize-y font-mono text-sm"
+                    placeholder="Encoded/decoded result will appear here..."></textarea>
+                <button onclick="copyToClipboard('base64-output')" class="mt-2 text-xs text-sky-400 hover:text-sky-300 cursor-pointer">
+                    Copy Result
+                </button>
+            </div>
+
+            <!-- Error Display for Text -->
+            <div id="text-base64-error" class="hidden p-4 border border-red-600 bg-red-900/20 text-red-400 rounded-lg">
+                <div class="flex items-start">
+                    <svg class="w-5 h-5 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293
+                            1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0
+                            00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                    </svg>
+                    <div>
+                        <div class="font-medium">Encoding/Decoding Error</div>
+                        <div id="text-base64-error-message" class="text-sm mt-1"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Encoder/Decoder -->
+    <div id="image-base64" class="base64-content hidden">
+        <div class="space-y-4">
+            <div>
+                <label for="image-input" class="block text-sm font-medium text-stone-300 mb-2">Upload Image</label>
+                <input type="file" id="image-input" accept="image/*" onchange="handleImageUpload()"
+                    class="block w-full p-3 border border-stone-600 bg-stone-700 text-stone-200 rounded-lg
+                        file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium
+                        file:bg-sky-600 file:text-white hover:file:bg-sky-500 cursor-pointer" />
+                <p class="text-xs text-stone-400 mt-1">Supports JPEG, PNG, GIF, WebP, and other common image formats</p>
+            </div>
+
+            <!-- Image Preview -->
+            <div id="image-preview" class="hidden">
+                <label class="block text-sm font-medium text-stone-300 mb-2">Image Preview</label>
+                <div class="border border-stone-600 bg-stone-700 rounded-lg p-4">
+                    <img id="preview-img" class="max-w-full max-h-64 mx-auto rounded" alt="Preview" />
+                    <div class="mt-2 text-xs text-stone-400 text-center">
+                        <span id="image-info"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap gap-2">
+                <button onclick="encodeImage()" class="px-4 py-2 bg-sky-600 hover:bg-sky-500 text-white text-sm
+                    font-medium rounded cursor-pointer">
+                    Encode to Base64
+                </button>
+                <button onclick="decodeImageFromBase64()" class="px-4 py-2 bg-green-600 hover:bg-green-500 text-white text-sm
+                    font-medium rounded cursor-pointer">
+                    Decode from Base64
+                </button>
+                <button onclick="clearImageBase64()" class="px-4 py-2 bg-stone-600 hover:bg-stone-500 text-white text-sm
+                    font-medium rounded cursor-pointer">
+                    Clear
+                </button>
+            </div>
+
+            <div>
+                <label for="image-base64-input" class="block text-sm font-medium text-stone-300 mb-2">Base64 Input/Output</label>
+                <textarea id="image-base64-input" rows="8"
+                    placeholder="Paste Base64 image data here to decode, or upload an image above to encode..."
+                    class="w-full p-4 border border-stone-600 bg-stone-700 text-stone-200 rounded-lg resize-y font-mono text-sm">
+                </textarea>
+                <button onclick="copyToClipboard('image-base64-input')"
+                    class="mt-2 text-xs text-sky-400 hover:text-sky-300 cursor-pointer">
+                    Copy Base64
+                </button>
+            </div>
+
+            <!-- Decoded Image Display -->
+            <div id="decoded-image-display" class="hidden">
+                <label class="block text-sm font-medium text-stone-300 mb-2">Decoded Image</label>
+                <div class="border border-stone-600 bg-stone-700 rounded-lg p-4">
+                    <img id="decoded-img" class="max-w-full max-h-64 mx-auto rounded" alt="Decoded" />
+                    <div class="mt-2 flex flex-wrap gap-2 justify-center">
+                        <button onclick="downloadDecodedImage()" class="px-3 py-1 bg-green-600 hover:bg-green-500 text-white text-xs
+                            font-medium rounded cursor-pointer">
+                            Download Image
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Error Display for Image -->
+            <div id="image-base64-error" class="hidden p-4 border border-red-600 bg-red-900/20 text-red-400 rounded-lg">
+                <div class="flex items-start">
+                    <svg class="w-5 h-5 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1
+                            1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586
+                            8.707 7.293z" clip-rule="evenodd"/>
+                    </svg>
+                    <div>
+                        <div class="font-medium">Image Processing Error</div>
+                        <div id="image-base64-error-message" class="text-sm mt-1"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
