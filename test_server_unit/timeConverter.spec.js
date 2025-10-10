@@ -1,6 +1,6 @@
 const { describe, expect, test } = require("@jest/globals");
 
-const { convertTime } = require("../services/timeConverter");
+const { convertTime } = require("../services/TimeConverter");
 
 describe("time converter", () => {
     describe("convertTime", () => {
@@ -62,14 +62,13 @@ describe("time converter", () => {
         });
 
         // Test cases for string dates
-        // these will probably start failing based on where the tests are run due to local timezone differences
         test.each([
             [ "ISO string date", "2021-01-01T00:00:00.000Z", "2021-01-01T00:00:00.000Z", "Fri, 01 Jan 2021 00:00:00 GMT", 1609459200000 ],
-            [ "ISO string date without Z", "2021-01-01T00:00:00.000", "2021-01-01T08:00:00.000Z", "Fri, 01 Jan 2021 08:00:00 GMT", 1609488000000 ],
+            [ "ISO string date without Z", "2021-01-01T00:00:00.000", "2021-01-01T00:00:00.000Z", "Fri, 01 Jan 2021 00:00:00 GMT", 1609459200000 ],
             [ "RFC 2822 date string", "Fri, 01 Jan 2021 00:00:00 GMT", "2021-01-01T00:00:00.000Z", "Fri, 01 Jan 2021 00:00:00 GMT", 1609459200000 ],
-            [ "date string with slashes", "2024/03/28 12:00:00", "2024-03-28T19:00:00.000Z", "Thu, 28 Mar 2024 19:00:00 GMT", 1711652400000 ],
-            [ "date string with dashes", "2024-03-28 12:00:00", "2024-03-28T19:00:00.000Z", "Thu, 28 Mar 2024 19:00:00 GMT", 1711652400000 ],
-            [ "human readable date string", "January 1, 2021", "2021-01-01T08:00:00.000Z", "Fri, 01 Jan 2021 08:00:00 GMT", 1609488000000 ]
+            [ "date string with slashes", "2024/03/28 12:00:00", "2024-03-28T12:00:00.000Z", "Thu, 28 Mar 2024 12:00:00 GMT", 1711627200000 ],
+            [ "date string with dashes", "2024-03-28 12:00:00", "2024-03-28T12:00:00.000Z", "Thu, 28 Mar 2024 12:00:00 GMT", 1711627200000 ],
+            [ "human readable date string", "January 1, 2021", "2021-01-01T00:00:00.000Z", "Fri, 01 Jan 2021 00:00:00 GMT", 1609459200000 ]
         ])("should convert %s", (description, input, expectedIso, expectedUtc, expectedTimestamp) => {
             const result = convertTime({ time: input });
 

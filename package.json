@@ -5,7 +5,7 @@
   "main": "util_server.js",
   "scripts": {
     "start": "node util_server.js",
-    "test:unit": "cross-env NODE_ENV=test jest test_server_unit",
+    "test:unit": "cross-env TZ=UTC NODE_ENV=test jest test_server_unit",
     "test:api": "cross-env NODE_ENV=test jest test_server_api",
     "test:integration": "cross-env NODE_ENV=test RUN_SERVER=true node util_server.js"
   },
