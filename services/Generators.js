@@ -1,4 +1,4 @@
-const crypto = require('crypto');
+const crypto = require('crypto'); // this will fail with node <= 20
 
 module.exports.generateHashes = (str) => {
     try {
