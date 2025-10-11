@@ -1,0 +1,9 @@
+version: '3.1'
+services:
+  app:
+    image: 'utils'
+    build: .
+    container_name: utils
+    restart: unless-stopped
+    ports:
+      - 8080:5000

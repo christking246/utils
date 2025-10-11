@@ -1,0 +1,22 @@
+# Ignoring all the markdown, docker and kubernetes files
+**/*.md
+**/*yml
+Dockerfile
+
+# dependencies
+node_modules/
+
+# misc
+integration/
+logs/
+
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
