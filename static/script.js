@@ -5,11 +5,18 @@ function fixMht() {
     const fileInput = document.getElementById("file-input");
     const outputTextArea = document.getElementById("output");
     const downloadBtn = document.getElementById("download-btn");
+    const processBtn = document.getElementById("process-btn");
 
     if (fileInput.files.length === 0) {
-        console.log("No file selected");
+        // TODO: create notification system
+        alert("Please select an MHT file first");
         return;
     }
+
+    // Disable process button during processing
+    processBtn.disabled = true;
+    processBtn.textContent = "Processing...";
+    downloadBtn.disabled = true;
 
     // Clear previous results
     outputTextArea.textContent = "";
@@ -52,6 +59,10 @@ function fixMht() {
             // Hide images section on error
             document.getElementById("mht-images-section").classList.add("hidden");
         }
+
+        // Re-enable process button
+        processBtn.disabled = false;
+        processBtn.textContent = "Process File";
     }
     reader.readAsText(fileInput.files[0]);
 }
@@ -123,25 +134,97 @@ function displayMhtImages(base64Images) {
     imagesSection.classList.remove("hidden");
 }
 
-function escListener (e) {
+// Global variables for image navigation in mht tool
+let currentImageIndex = 0;
+let allImages = [];
+
+function keyListener(e) {
     if (e.key === "Escape" || e.key === "Esc") {
         closeFullImage();
+    } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        navigateImage(-1);
+    } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        navigateImage(1);
     }
 }
 
-// TODO: allow navigation between images
+function navigateImage(direction) {
+    if (allImages.length === 0) return;
+
+    // Calculate new index with wrapping
+    const newIndex = (currentImageIndex + direction + allImages.length) % allImages.length;
+    currentImageIndex = newIndex;
+
+    // Update the image and counter
+    updateFullImage();
+}
+
+function updateFullImage() {
+    const img = document.querySelector("#image-overlay img");
+    const imageCounter = document.getElementById("image-counter");
+
+    if (img && allImages[currentImageIndex]) {
+        img.src = allImages[currentImageIndex].dataUrl;
+        img.alt = `Full size image ${currentImageIndex + 1}`;
+
+        if (imageCounter) {
+            imageCounter.textContent = `${currentImageIndex + 1} of ${allImages.length}`;
+        }
+    }
+}
+
 function viewFullImage(dataUrl, imageIndex) {
+    // Store current image index (convert from 1-based to 0-based)
+    currentImageIndex = imageIndex - 1;
+
+    // Build array of all images from the current MHT extraction
+    allImages = [];
+    const imageElements = document.querySelectorAll("#mht-images-container img");
+    imageElements.forEach((img, index) => {
+        allImages.push({
+            dataUrl: img.src,
+            index: index
+        });
+    });
+
     // Create a modal-like overlay to view the full-size image
     const overlay = document.createElement("div");
     overlay.setAttribute("id", "image-overlay");
     overlay.className = "fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4";
 
-    document.addEventListener("keydown", escListener);
+    document.addEventListener("keydown", keyListener);
     overlay.innerHTML = `
         <div class="relative max-w-full max-h-full">
             <img src="${dataUrl}"
                 alt="Full size image ${imageIndex}"
                 class="max-w-full max-h-full object-contain rounded-lg shadow-2xl" />
+
+            <!-- Navigation arrows -->
+            ${allImages.length > 1 ? `
+                <button onclick="navigateImage(-1)"
+                    class="cursor-pointer absolute left-4 top-1/2 transform -translate-y-1/2 bg-stone-800 hover:bg-stone-700
+                        text-white rounded-full p-3 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                </button>
+                <button onclick="navigateImage(1)"
+                    class="cursor-pointer absolute right-4 top-1/2 transform -translate-y-1/2 bg-stone-800 hover:bg-stone-700
+                        text-white rounded-full p-3 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </button>
+
+                <!-- Image counter -->
+                <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-50 text-white px-3 py-1 rounded-full text-sm">
+                    <span id="image-counter">${imageIndex} of ${allImages.length}</span>
+                </div>
+            ` : ''}
+
+            <!-- Close button -->
             <button onclick="closeFullImage()"
                 class="cursor-pointer absolute top-4 right-4 bg-red-800 hover:bg-red-700 text-white rounded-full p-2 transition-colors">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -159,7 +242,11 @@ function closeFullImage() {
     if (overlay) {
         document.body.removeChild(overlay);
     }
-    document.removeEventListener("keydown", escListener);
+    document.removeEventListener("keydown", keyListener);
+
+    // Reset navigation state
+    currentImageIndex = 0;
+    allImages = [];
 }
 
 // TODO: is thi becoming a common util function?
