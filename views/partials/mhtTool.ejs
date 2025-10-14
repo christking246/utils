@@ -7,10 +7,17 @@
     <div class="space-y-4">
         <div>
             <label for="file-input" class="block text-sm font-medium text-stone-300 mb-2">Select MHT File</label>
-            <input type="file" id="file-input" accept=".mht,.mhtml" onchange="fixMht()"
-                class="block w-full p-3 border border-stone-600 bg-stone-700 text-stone-200 rounded-lg
-                    file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium
-                    file:bg-sky-600 file:text-white hover:file:bg-sky-500 cursor-pointer" />
+            <div class="flex gap-3">
+                <input type="file" id="file-input" accept=".mht,.mhtml"
+                    class="flex-1 p-3 border border-stone-600 bg-stone-700 text-stone-200 rounded-lg
+                        file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium
+                        file:bg-sky-600 file:text-white hover:file:bg-sky-500 cursor-pointer" />
+                <button id="process-btn" onclick="fixMht()"
+                    class="px-6 py-3 bg-sky-600 hover:bg-sky-500 disabled:bg-stone-600 cursor-pointer
+                        disabled:cursor-not-allowed text-white font-medium rounded-lg whitespace-nowrap">
+                    Process File
+                </button>
+            </div>
         </div>
 
         <div>
