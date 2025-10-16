@@ -15,6 +15,7 @@ const jwtRouter = require("./routes/jwtDecoder.js");
 const timeRouter = require("./routes/timeConverter.js");
 const serializationRouter = require("./routes/serialization.js");
 const cronRouter = require("./routes/cron.js");
+const urlHandlingRouter = require("./routes/urlHandling.js");
 
 const mcpRouter = require("./routes/mcp.js");
 
@@ -32,6 +33,7 @@ app.use("/api/jwt", jwtRouter);
 app.use("/api/time", timeRouter);
 app.use("/api/serialize", serializationRouter);
 app.use("/api/cron", cronRouter);
+app.use("/api/url", urlHandlingRouter);
 
 app.set("view engine", "ejs");
 app.get("/", (_, res) => res.render("index"));
