@@ -6,12 +6,12 @@ modern web UI, RESTful API endpoints and MCP endpoints, making it perfect for qu
 ## 📖 Table of contents
 
 - [🚀 Getting started](#-getting-started)
-- [🧰 Available Tools](#-available-tools)
+- [⚙️ Configuration](#️-configuration)
+- [🧰 Available Tools](#-some-available-tools)
 - [🌐 Web Interface](#-web-interface)
 - [📡 API Endpoints](#-api-endpoints)
 - [🤖 Model Context Protocol (MCP) Support](#-model-context-protocol-mcp-support)
 - [🧪 Testing](#-testing)
-- [⚙️ Configuration](#️-configuration)
 - [📓 Future Plans](#-future-plans)
 
 ## 🚀 Getting started
@@ -36,7 +36,15 @@ Node.js is required to run this project. You can find [Node.js installation inst
 
 The server will start on port 5000 by default and provide both the web interface, API and MCP endpoints.
 
-## 🧰 Available Tools
+## ⚙️ Configuration
+
+### Environment Variables
+
+- `VERSION` - Application version (default: "1.0.0")
+- `NODE_ENV` - Environment mode (development/test/production)
+- `PORT` - Server port (default: 5000)
+
+## 🧰 Some Available Tools
 
 ### Hash Generator
 
@@ -124,15 +132,77 @@ TODO: add full api reference doc
 
 ## 🤖 Model Context Protocol (MCP) Support
 
-The project includes MCP server support for integration with AI tools and assistants:
+The project includes MCP server support for integration with AI tools and assistants. MCP enables AI assistants to interact with the utility tools programmatically.
+
+### Architecture
 
 - **Stateless HTTP Transport** - Each request creates isolated server instances
 - **Tool Registration** - Exposes utility functions as MCP tools
 - **Concurrent Client Support** - Handles multiple clients without ID collisions
 
-Almost all tolls are available as MCP tools. Access MCP endpoints via `POST /mcp`.
+### MCP Endpoint
 
-TODO: add full mcp reference doc
+Access all MCP functionality via (not all tools are mcp available):
+
+```http
+POST /mcp
+```
+
+### MCP Integration Examples
+
+- 🔧 [Using with vscode](#using-with-vscode)
+- 🌟 [Using with Claude Desktop](#using-with-claude-desktop)
+- 🌐 [Using MCP Inspector](#using-mcp-inspector-via-browser)
+
+#### Using with VSCode
+
+![vscode add mcp server](previews/vscode_add_mcp_server.png)
+
+Follow prompts to add an **http** mcp server.
+
+Alternatively, find your vscode code settings file and appropriately add the snippet below:
+
+```json
+"mcp": {
+    "servers": {
+          "utils-mcp-server": {
+            "url": "http://localhost:5000/mcp"
+          }
+    }
+}
+```
+
+#### Using with Claude Desktop
+
+Add the following configuration to your Claude Desktop MCP settings:
+
+```json
+{
+    "mcpServers": {
+        "utils": {
+            "command": "node",
+            "args": ["/path/to/utils/mcp_server.js"],
+            "env": {
+                "PORT": "5000"
+            }
+        }
+    }
+}
+```
+
+#### Using MCP Inspector (via browser)
+
+Launch the web inspector with `npx @modelcontextprotocol/inspector`
+
+Setup the connection to the mcp server:
+
+![browser mcp inspector config](previews/browser_mcp_inspector_config.png)
+
+List the available tools and test:
+
+![browser list mcp tools](previews/browser_mcp_inspector_list.png)
+
+![browser test mcp tool](previews/browser_mcp_inspector_test.png)
 
 ## 🧪 Testing
 
@@ -156,31 +226,9 @@ Testing stack:
 - **Playwright** - Integration testing
 - **Cross-env** - Environment variable management
 
-## ⚙️ Configuration
-
-### Environment Variables
-
-- `VERSION` - Application version (default: "1.0.0")
-- `NODE_ENV` - Environment mode (development/test/production)
-- `PORT` - Server port (default: 5000)
-
-### Logging
-
-The application uses Winston for logging with:
-
-- **File rotation** - Automatic log file rotation (per run)
-- **Environment-specific loggers** - Different configurations per environment
-- **HTTP request logging** - Via Morgan middleware
-
 ## 📓 Future Plans
 
 - [ ] Support for additional serialization formats (XML, etc?)
 - [ ] URL encoding/decoding utilities
 - [ ] Password generator with customizable rules
-- [ ] Dockerize app
-
----
-
-**Author**: christking246  
-**License**: MIT  
-**Version**: 1.0.0
+- [x] Dockerize app
