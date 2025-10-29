@@ -8,7 +8,7 @@ const { describeCron } = require("./services/Cron.js");
 
 const server = new McpServer({
     name: "util-server",
-    version: "1.0.0" // should this match the api server version?
+    version: global.VERSION
 });
 
 server.registerTool(

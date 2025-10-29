@@ -35,20 +35,30 @@
 
         <!-- Navigation Sidebar/up bar -->
         <nav id="nav-sidebar" class="bg-gradient-to-b from-stone-900 to-stone-950 lg:border-r border-stone-700/50 text-stone-100
-            w-full lg:w-1/4 lg:block hidden absolute lg:relative z-10 h-full lg:h-auto shadow-2xl lg:shadow-none">
+            w-full lg:w-1/4 lg:flex flex-col justify-between hidden absolute lg:relative z-10 h-full lg:h-auto shadow-2xl lg:shadow-none">
 
-            <!-- Desktop Header -->
-            <div class="hidden lg:block">
-                <div class="p-6 border-b border-stone-700/50">
-                    <h1 class="text-2xl font-bold bg-gradient-to-r from-sky-400 to-blue-500 bg-clip-text text-transparent">
-                        Utils
-                    </h1>
-                    <p class="text-sm text-stone-400 mt-1">Developer Tools</p>
+            <div>
+                <!-- Desktop Header -->
+                <div class="hidden lg:block">
+                    <div class="p-6 border-b border-stone-700/50">
+                        <h1 class="text-2xl font-bold bg-gradient-to-r from-sky-400 to-blue-500 bg-clip-text text-transparent">
+                            Utils
+                        </h1>
+                        <p class="text-sm text-stone-400 mt-1">Developer Tools</p>
+                    </div>
                 </div>
+
+                <!-- Navigation Menu -->
+                <%- include("partials/navMenuItems"); %>
             </div>
 
-            <!-- Navigation Menu -->
-            <%- include("partials/navMenuItems"); %>
+            <!-- Footer for desktop -->
+            <div class="hidden lg:block px-4 py-6 border-t border-stone-700/50">
+                <div class="text-xs text-stone-500 space-y-1">
+                    <p id="version-p">Version 1.0.0</p>
+                    <p class="text-stone-600">Utils</p>
+                </div>
+            </div>
         </nav>
 
         <!-- Main Content Area -->
@@ -123,6 +133,17 @@
                     switchTool(toolId);
                 });
             });
+
+            // update with the version from the api
+            fetch('/api/ping')
+                .then(response => response.json())
+                .then(data => {
+                    const versionP = document.getElementById('version-p');
+                    versionP.textContent = `Version ${data.version}`;
+                })
+                .catch(error => {
+                    console.error('Error fetching version:', error);
+                });
 
             // Initialize with first tool active
             switchTool("hash-generator");
