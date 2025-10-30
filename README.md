@@ -26,6 +26,11 @@ Node.js is required to run this project. You can find [Node.js installation inst
    ```
 
 3. (Optional) Create a `.env` file at the root of the project directory for custom configuration. See [⚙️ Configuration](#️-configuration).
+
+    ```bash
+    cp .env.example .env
+    ```
+
 4. Start the server:
 
    ```bash
@@ -40,9 +45,16 @@ The server will start on port 5000 by default and provide both the web interface
 
 ### Environment Variables
 
-- `VERSION` - Application version (default: "1.0.0")
-- `NODE_ENV` - Environment mode (development/test/production)
-- `PORT` - Server port (default: 5000)
+```properties
+# The env to run (dev, prod, test). This affects things like the logs. (default: "dev")
+NODE_ENV=dev
+
+# Application version (default: "1.0.0")
+VERSION=1.0.0
+
+# Optional: Port of the express server hosting the http/mcp endpoints and UI (default: 5000)
+PORT=5000
+```
 
 ## 🧰 Some Available Tools
 
