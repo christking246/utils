@@ -80,6 +80,24 @@ function getRelativeTime(timestamp) {
     return 'just now';
 }
 
+// TODO: unit test this?
+function getDaysSince(timestamp) {
+    const now = Date.now();
+    const diffMs = now - timestamp;
+    const daysDiff = Math.floor(diffMs / (24 * 60 * 60 * 1000));
+
+    if (diffMs < 0) {
+        // Future date
+        return `${Math.abs(daysDiff)} days in the future`;
+    } else if (daysDiff === 0) {
+        return 'Today';
+    } else if (daysDiff === 1) {
+        return '1 day ago';
+    } else {
+        return `${daysDiff} days ago`;
+    }
+}
+
 function displayTimeResults(data) {
     // Display the converted time formats
     document.getElementById("timestamp-result").textContent = data.timestamp;
@@ -98,6 +116,10 @@ function displayTimeResults(data) {
     // should we keep updating this?
     const relativeTime = getRelativeTime(data.timestamp);
     document.getElementById("relative-result").textContent = relativeTime;
+
+    // Calculate and display days since
+    const daysSince = getDaysSince(data.timestamp);
+    document.getElementById("days-since-result").textContent = daysSince;
 
     // Show results
     document.getElementById("time-results").classList.remove("hidden");

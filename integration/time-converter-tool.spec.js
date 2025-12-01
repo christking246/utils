@@ -39,15 +39,20 @@ test.describe("Time Converter Tool", () => {
         const utcText = await page.locator('#utc-result').textContent();
         const localText = await page.locator('#local-result').textContent();
         const relativeText = await page.locator('#relative-result').textContent();
+        const daysSinceText = await page.locator('#days-since-result').textContent();
 
         expect(timestampText).not.toBe('-');
         expect(isoText).not.toBe('-');
         expect(utcText).not.toBe('-');
         expect(localText).not.toBe('-');
         expect(relativeText).not.toBe('-');
+        expect(daysSinceText).not.toBe('-');
 
         // Verify the relative time shows "just now" for current time
         expect(relativeText).toContain('just now');
+
+        // Verify the days since shows "Today" for current time
+        expect(daysSinceText).toBe('Today');
 
         // Verify ISO format structure (should be ISO 8601)
         expect(isoText).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
@@ -85,6 +90,10 @@ test.describe("Time Converter Tool", () => {
         // Verify relative time shows it was in the past
         const relativeText = await page.locator('#relative-result').textContent();
         expect(relativeText).toContain('ago');
+
+        // Verify days since shows the correct number (should be many days ago)
+        const daysSinceText = await page.locator('#days-since-result').textContent();
+        expect(daysSinceText).toMatch(/\d+ days ago/); // Should show "X days ago"
     });
 
     test("test time converter error handling", async ({ page }) => {
@@ -177,5 +186,47 @@ test.describe("Time Converter Tool", () => {
 
         // Verify relative time shows "in 1 hour"
         expect(await page.locator('#relative-result').textContent()).toMatch(/in 1 hour/);
+    });
+
+    test("test time converter days since functionality", async ({ page }) => {
+        await pageSetup({ page });
+
+        // Navigate to the Time Converter tool
+        await page.click('[data-tool="time-converter"]');
+        await expect(page.locator('#time-converter-tool')).toBeVisible();
+
+        // Test 1: Current time should show "Today"
+        await page.click('button:has-text("Use Current Time")');
+        await page.click('button:has-text("Convert Time")');
+        await expect(page.locator('#time-results')).toBeVisible();
+
+        const daysSinceToday = await page.locator('#days-since-result').textContent();
+        expect(daysSinceToday).toBe('Today');
+
+        // Test 2: Yesterday (24 hours ago)
+        const yesterday = Date.now() - (24 * 60 * 60 * 1000);
+        await page.fill('#time-input', yesterday.toString());
+        await page.click('button:has-text("Convert Time")');
+        await expect(page.locator('#time-results')).toBeVisible();
+
+        const daysSinceYesterday = await page.locator('#days-since-result').textContent();
+        expect(daysSinceYesterday).toBe('1 day ago');
+
+        // Test 3: Multiple days ago (January 1, 2021 = 1609459200000)
+        await page.fill('#time-input', '1609459200000');
+        await page.click('button:has-text("Convert Time")');
+        await expect(page.locator('#time-results')).toBeVisible();
+
+        const daysSinceOld = await page.locator('#days-since-result').textContent();
+        expect(daysSinceOld).toMatch(/\d+ days ago/);
+
+        // Test 4: Future date (tomorrow)
+        const tomorrow = Date.now() + (24 * 60 * 60 * 1000);
+        await page.fill('#time-input', tomorrow.toString());
+        await page.click('button:has-text("Convert Time")');
+        await expect(page.locator('#time-results')).toBeVisible();
+
+        const daysSinceFuture = await page.locator('#days-since-result').textContent();
+        expect(daysSinceFuture).toMatch(/\d+ days? in the future/);
     });
 });
