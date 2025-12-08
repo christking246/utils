@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 
 import { pageSetup } from './setup.js';
 
-test.describe.only('SVG Optimizer Tool', () => {
+test.describe('SVG Optimizer Tool', () => {
     test('should display SVG optimizer interface', async ({ page }) => {
         await pageSetup({ page });
 

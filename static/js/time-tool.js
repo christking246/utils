@@ -82,11 +82,21 @@ function getRelativeTime(timestamp) {
 
 // TODO: unit test this?
 function getDaysSince(timestamp) {
-    const now = Date.now();
-    const diffMs = now - timestamp;
-    const daysDiff = Math.floor(diffMs / (24 * 60 * 60 * 1000));
+    // Use local dates to respect user's timezone
+    const now = new Date();
+    const inputDate = new Date(timestamp);
 
-    if (diffMs < 0) {
+    // Get the start of today in local time
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    // Get the start of the input date in local time
+    const inputDateStart = new Date(inputDate.getFullYear(), inputDate.getMonth(), inputDate.getDate());
+
+    // Calculate difference in milliseconds between the start of both dates
+    const diffMs = todayStart.getTime() - inputDateStart.getTime();
+    const daysDiff = Math.round(diffMs / (24 * 60 * 60 * 1000));
+
+    if (daysDiff < 0) {
         // Future date
         return `${Math.abs(daysDiff)} days in the future`;
     } else if (daysDiff === 0) {
