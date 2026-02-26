@@ -5,6 +5,7 @@ const { generateHashes, generateGuid } = require("./services/Generators.js");
 const { decodeJwt } = require("./services/JwtDecoder.js");
 const { convertTime } = require("./services/TimeConverter.js");
 const { describeCron } = require("./services/Cron.js");
+const { formatMarkdownTable } = require("./services/Formatter.js");
 
 const server = new McpServer({
     name: "util-server",
@@ -128,6 +129,28 @@ server.registerTool(
         else {
             return {
                 content: [{ type: "text", text: "An error occurred while describing cron expression " + msg }]
+            }
+        }
+    }
+);
+
+server.registerTool(
+    "md_formatter",
+    {
+        title: "Markdown Formatter",
+        description: "Formats a markdown table with correct spacing and alignment for improved raw readability",
+        inputSchema: { table: z.string() }
+    },
+    ({ table }) => {
+        const { success, table: formattedTable, msg } = formatMarkdownTable(table);
+        if (success) {
+            return {
+                content: [{ type: "text", text: JSON.stringify(formattedTable) }]
+            }
+        }
+        else {
+            return {
+                content: [{ type: "text", text: "An error occurred while formatting the markdown table " + msg }]
             }
         }
     }

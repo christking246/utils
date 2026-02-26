@@ -1,6 +1,6 @@
 const { describe, expect, test } = require("@jest/globals");
 
-const { makeBool, isDefined, isValidString } = require("../utils");
+const { makeBool, isDefined, isValidString, padRight } = require("../utils");
 
 describe("utils", () => {
     describe("makeBool", () => {
@@ -74,6 +74,38 @@ describe("utils", () => {
         ])("returns true if the input is defined and not null and is a string and is not empty or whitespace (false otherwise): '%s'",
             ({ value, expected }) => {
                 expect(isValidString(value)).toBe(expected);
+        });
+    });
+
+    describe("padRight", () => {
+        test.each([
+            { input: "hello", length: 10, padChar: " ", expected: "hello     " },
+            { input: "test", length: 8, padChar: "-", expected: "test----" },
+            { input: "", length: 4, padChar: "#", expected: "####" },
+            { input: "a", length: 1, padChar: " ", expected: "a" },
+            { input: "already long", length: 5, padChar: " ", expected: "already long" },
+            { input: "exact", length: 5, padChar: " ", expected: "exact" },
+        ])("should pad string '$input' to length $length with '$padChar'", ({ input, length, padChar, expected }) => {
+            expect(padRight(input, length, padChar)).toBe(expected);
+        });
+
+        test.each([
+            { input: 123, length: 6, padChar: "0", expected: "123000" },
+            { input: 0, length: 3, padChar: "-", expected: "0--" },
+            { input: true, length: 6, padChar: " ", expected: "true  " },
+            { input: false, length: 7, padChar: "x", expected: "falsexx" },
+            { input: null, length: 6, padChar: "n", expected: "nullnn" },
+            { input: undefined, length: 11, padChar: ".", expected: "undefined.." },
+        ])("should convert non-string input to string: $input", ({ input, length, padChar, expected }) => {
+            expect(padRight(input, length, padChar)).toBe(expected);
+        });
+
+        test.each([
+            { input: "test", length: 0, padChar: " ", expected: "test" },
+            { input: "hello", length: -1, padChar: " ", expected: "hello" },
+            { input: "world", length: -5, padChar: "x", expected: "world" },
+        ])("should return original string when length is 0 or negative: length $length", ({ input, length, padChar, expected }) => {
+            expect(padRight(input, length, padChar)).toBe(expected);
         });
     });
 });

@@ -32,9 +32,26 @@ const makeBool = (value) => {
     return value.toUpperCase() === "TRUE" || value === "1" || value.toUpperCase() === "YES";
 };
 
+// please don't pass a multi-character string as the padding character
+const padRight = (v, n, c) => {
+    v = v + ""; // convert to string
+    if (v.length >= n) {
+        return v;
+    }
+
+    for (let i = 0; i < n; i++) {
+        v = v + c;
+        if (v.length >= n) {
+            break;
+        }
+    }
+    return v;
+}
+
 module.exports = {
     isDefined,
     isValidString,
     makeBool,
-    isNumber
+    isNumber,
+    padRight
 };
