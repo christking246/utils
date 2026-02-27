@@ -3,7 +3,7 @@
 
 function copyToClipboard(elementId) {
     const element = document.getElementById(elementId);
-    const text = element.textContent || element.value;
+    const text = element.textContent?.trim() || element.value;
 
     navigator.clipboard.writeText(text).then(() => {
         showNotification('Copied to clipboard!', 'success');

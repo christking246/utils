@@ -1,0 +1,95 @@
+<div id="markdown-table-formatter-tool" class="tool-content hidden">
+    <div class="mb-6">
+        <h2 class="text-2xl font-bold text-stone-200 mb-2">Markdown Table Formatter</h2>
+        <p class="text-stone-400">
+            Format and align markdown tables with proper spacing and consistent column widths.</p>
+    </div>
+
+    <div class="space-y-4">
+        <!-- Input Section -->
+        <div>
+            <label for="md-table-input" class="block text-sm font-medium text-stone-300 mb-2">
+                Markdown Table Input
+            </label>
+            <textarea id="md-table-input" rows="10" placeholder="Paste your markdown table here...
+Example:
+| Name | Age | City |
+| --- | --- | --- |
+| John | 25 | New York |
+| Jane Smith | 30 | Los Angeles |"
+                class="w-full p-3 border border-stone-600 bg-stone-700 text-stone-200 rounded-lg
+                    font-mono text-sm resize-vertical">
+            </textarea>
+            <p class="text-xs text-stone-400 mt-1">
+                Enter an unformatted markdown table with proper headers and separators</p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-wrap gap-2">
+            <button onclick="formatMarkdownTable()" class="px-6 py-3 bg-sky-600 hover:bg-sky-500 text-white
+                font-medium rounded-lg cursor-pointer">
+                Format Table
+            </button>
+            <button onclick="clearMdTableResults()" class="px-4 py-2 bg-stone-600 hover:bg-stone-500 text-white text-sm
+                font-medium rounded cursor-pointer" id="clear-md-table-btn">
+                Clear
+            </button>
+            <button onclick="loadMdTableExample()" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white text-sm
+                font-medium rounded cursor-pointer">
+                Load Example
+            </button>
+        </div>
+
+        <!-- Error Display -->
+        <div id="md-table-error" class="hidden p-4 border border-red-600 bg-red-900/20 text-red-400 rounded-lg">
+            <div class="flex items-start">
+                <svg class="w-5 h-5 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414
+                        1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0
+                        001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10
+                        8.586 8.707 7.293z" clip-rule="evenodd"/>
+                </svg>
+                <div>
+                    <div class="font-medium">Formatting Error</div>
+                    <div id="md-table-error-message" class="text-sm mt-1"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Success Display -->
+        <div id="md-table-success" class="hidden p-4 border border-green-600 bg-green-900/20 text-green-400 rounded-lg">
+            <div class="flex items-start">
+                <svg class="w-5 h-5 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9
+                        10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                </svg>
+                <div>
+                    <div class="font-medium">Table Formatted Successfully</div>
+                    <div class="text-sm mt-1">Your markdown table has been properly aligned and formatted.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div id="md-table-results" class="hidden space-y-4">
+            <div class="flex items-center justify-between">
+                <label class="block text-sm font-medium text-stone-300">
+                    Formatted Markdown Table
+                </label>
+                <button onclick="copyFormattedTable()" class="text-xs text-sky-400 hover:text-sky-300 cursor-pointer">
+                    Copy Formatted Table
+                </button>
+            </div>
+
+            <div class="space-y-4">
+                <!-- Formatted Table Output -->
+                <div class="relative">
+                    <textarea id="md-table-output" readonly rows="15"
+                        class="w-full p-3 border border-stone-600 bg-stone-700 text-stone-200 rounded-lg
+                            font-mono text-sm resize-vertical">
+                    </textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
