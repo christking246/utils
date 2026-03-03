@@ -18,6 +18,7 @@ const cronRouter = require("./routes/cron.js");
 const urlHandlingRouter = require("./routes/urlHandling.js");
 const svgRouter = require("./routes/svg.js");
 const formatterRouter = require("./routes/formatter.js");
+const imageRouter = require("./routes/compareImage.js");
 
 const mcpRouter = require("./routes/mcp.js");
 
@@ -38,6 +39,7 @@ app.use("/api/cron", cronRouter);
 app.use("/api/url", urlHandlingRouter);
 app.use("/api/svg", svgRouter);
 app.use("/api/formatter", formatterRouter);
+app.use("/api/image", imageRouter);
 
 app.set("view engine", "ejs");
 app.get("/", (_, res) => res.render("index"));

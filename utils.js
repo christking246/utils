@@ -1,5 +1,8 @@
 // utils in a utils project
 
+const fs = require("fs");
+const path = require("path");
+
 const isDefined = (value) => {
     return value !== undefined && value !== null;
 };
@@ -48,10 +51,22 @@ const padRight = (v, n, c) => {
     return v;
 }
 
+// this is used for loading images in tests
+const loadImage = (file) => {
+    file = path.join(__dirname, file);
+
+    // read binary data
+    const data = fs.readFileSync(file);
+
+    // convert binary data to base64 encoded string
+    return new Buffer.from(data).toString("base64");
+};
+
 module.exports = {
     isDefined,
     isValidString,
     makeBool,
     isNumber,
-    padRight
+    padRight,
+    loadImage
 };
