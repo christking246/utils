@@ -15,6 +15,8 @@ module.exports.compareImage = async (img1, img2, threshold) => {
         threshold = 0.25
     }
 
+    threshold = Number(threshold); // in case number is a string
+
     try {
         const jimpImg1 = await Jimp.fromBuffer(Buffer.from(img1, "base64"));
         const jimpImg2 = await Jimp.fromBuffer(Buffer.from(img2, "base64"));

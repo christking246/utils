@@ -55,7 +55,7 @@ describe("Compare image", () => {
         const img1 = loadImage("./test_server_unit/compare_img1.png");
         const img2 = loadImage("./test_server_unit/compare_img1.png");
 
-        const { success, code, threshold, percent } = await compareImage(img1, img2, 0.1);
+        const { success, code, threshold, percent } = await compareImage(img1, img2, "0.1");
 
         expect(success).toBe(true);
         expect(code).toBe(200);
