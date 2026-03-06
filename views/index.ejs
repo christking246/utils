@@ -20,6 +20,7 @@
         <script src="js/json-yaml-converter-tool.js" defer></script>
         <script src="js/svg-optimizer-tool.js" defer></script>
         <script src="js/markdown-table-formatter-tool.js" defer></script>
+        <script src="js/image-compare-tool.js" defer></script>
 
         <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     </head>
@@ -85,6 +86,8 @@
             <%- include("partials/svgOptimizerTool"); %>
 
             <%- include("partials/formatMdTableTool"); %>
+
+            <%- include("partials/imageCompareTool"); %>
         </main>
 
         <!-- Wondering whether to put this in a separate js file and have this be purely an html file (with tailwind ofc) or keep here since this

@@ -1,0 +1,148 @@
+<div id="image-compare-tool" class="tool-content hidden">
+    <div class="mb-6">
+        <h2 class="text-2xl font-bold text-stone-200 mb-2">Image Compare</h2>
+        <p class="text-stone-400">
+            Compare two images to find differences. Upload images and adjust the sensitivity threshold to detect variations.
+        </p>
+    </div>
+
+    <!-- Upload Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <!-- Image 1 Upload -->
+        <div class="space-y-4">
+            <h3 class="text-lg font-semibold text-stone-200">Image 1</h3>
+            <div id="drop-zone-1" class="border-2 border-dashed border-stone-600 bg-stone-800 rounded-lg p-6
+                text-center hover:border-sky-500 transition-colors cursor-pointer">
+                <div id="upload-content-1" class="space-y-3">
+                    <svg class="mx-auto h-12 w-12 text-stone-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                        <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4
+                            4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    <div>
+                        <p class="text-stone-300">Drop your first image here or</p>
+                        <button type="button" class="text-sky-400 hover:text-sky-300 font-medium">browse files</button>
+                    </div>
+                    <p class="text-sm text-stone-500">PNG, JPG, GIF up to 10MB</p>
+                </div>
+                <div id="image-preview-1" class="hidden">
+                    <img class="max-w-full max-h-48 mx-auto rounded" alt="Image 1 preview">
+                    <p class="mt-2 text-sm text-stone-400" id="image-1-info"></p>
+                    <button onclick="clearImage(1)" class="mt-2 text-xs text-red-400 hover:text-red-300">Remove</button>
+                </div>
+            </div>
+            <input type="file" id="file-input-1" class="hidden" accept="image/*">
+        </div>
+
+        <!-- Image 2 Upload -->
+        <div class="space-y-4">
+            <h3 class="text-lg font-semibold text-stone-200">Image 2</h3>
+            <div id="drop-zone-2" class="border-2 border-dashed border-stone-600 bg-stone-800 rounded-lg p-6 text-center
+                hover:border-sky-500 transition-colors cursor-pointer">
+                <div id="upload-content-2" class="space-y-3">
+                    <svg class="mx-auto h-12 w-12 text-stone-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                        <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0
+                            00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    <div>
+                        <p class="text-stone-300">Drop your second image here or</p>
+                        <button type="button" class="text-sky-400 hover:text-sky-300 font-medium">browse files</button>
+                    </div>
+                    <p class="text-sm text-stone-500">PNG, JPG, GIF up to 10MB</p>
+                </div>
+                <div id="image-preview-2" class="hidden">
+                    <img class="max-w-full max-h-48 mx-auto rounded" alt="Image 2 preview">
+                    <p class="mt-2 text-sm text-stone-400" id="image-2-info"></p>
+                    <button onclick="clearImage(2)" class="mt-2 text-xs text-red-400 hover:text-red-300">Remove</button>
+                </div>
+            </div>
+            <input type="file" id="file-input-2" class="hidden" accept="image/*">
+        </div>
+    </div>
+
+    <!-- Threshold Control -->
+    <div class="mb-6 p-4 bg-stone-800 rounded-lg">
+        <label for="threshold-slider" class="block text-sm font-medium text-stone-300 mb-3">
+            Comparison Sensitivity: <span id="threshold-value" class="text-sky-400 font-mono">0.25</span>
+        </label>
+        <input type="range" id="threshold-slider" min="0" max="1" step="0.01" value="0.25"
+            class="w-full h-2 bg-stone-700 rounded-lg appearance-none cursor-pointer slider">
+        <div class="flex justify-between text-xs text-stone-500 mt-2">
+            <span>More Sensitive (0.0)</span>
+            <span>Less Sensitive (1.0)</span>
+        </div>
+        <p class="text-xs text-stone-400 mt-2">
+            Lower values detect subtle changes, higher values only detect obvious differences.
+        </p>
+    </div>
+
+    <!-- Compare Button -->
+    <div class="mb-6">
+        <button id="compare-btn" onclick="compareImages()" disabled
+            class="w-full px-6 py-3 bg-sky-600 hover:bg-sky-500 disabled:bg-stone-600 disabled:cursor-not-allowed
+                text-white font-medium rounded-lg transition-colors">
+            <span id="compare-btn-text">Upload Both Images to Compare</span>
+        </button>
+    </div>
+
+    <!-- Error Display -->
+    <div id="compare-error" class="hidden mb-6 p-4 bg-red-900/50 border border-red-600 rounded-lg">
+        <div class="flex items-center">
+            <svg class="h-5 w-5 text-red-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586
+                    10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414
+                    10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+            </svg>
+            <span id="compare-error-message" class="text-red-200"></span>
+        </div>
+    </div>
+
+    <!-- Results Section -->
+    <div id="comparison-results" class="hidden space-y-6">
+        <!-- Results Summary -->
+        <div class="bg-stone-800 rounded-lg p-4">
+            <h3 class="text-lg font-semibold text-stone-200 mb-3">Comparison Results</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                <div class="bg-stone-700 rounded-lg p-3">
+                    <div class="text-2xl font-bold text-sky-400" id="difference-percent">0%</div>
+                    <div class="text-sm text-stone-400">Difference</div>
+                </div>
+                <div class="bg-stone-700 rounded-lg p-3">
+                    <div class="text-2xl font-bold text-green-400" id="similarity-percent">100%</div>
+                    <div class="text-sm text-stone-400">Similarity</div>
+                </div>
+                <div class="bg-stone-700 rounded-lg p-3">
+                    <div class="text-sm font-mono text-stone-300" id="threshold-used">0.25</div>
+                    <div class="text-sm text-stone-400">Threshold Used</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Difference Image -->
+        <div class="bg-stone-800 rounded-lg p-4">
+            <h4 class="text-md font-semibold text-stone-200 mb-3">Difference Map</h4>
+            <div class="text-center">
+                <img id="diff-image" class="max-w-full mx-auto rounded border border-stone-600" alt="Difference visualization">
+                <div class="mt-3 flex flex-wrap justify-center gap-2">
+                    <button onclick="downloadDiffImage()" class="px-4 py-2 bg-green-600 hover:bg-green-500 text-white text-sm font-medium rounded">
+                        Download Diff Image
+                    </button>
+                    <button onclick="copyDiffToClipboard()" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium rounded">
+                        Copy to Clipboard
+                    </button>
+                </div>
+            </div>
+            <p class="text-xs text-stone-400 mt-3 text-center">
+                Red areas indicate differences between the images. White areas are identical.
+            </p>
+        </div>
+
+        <!-- Reset Button -->
+        <div class="text-center">
+            <button onclick="resetComparison()" id="reset-button" class="px-6 py-2 bg-stone-600 hover:bg-stone-500 text-white font-medium rounded">
+                Compare New Images
+            </button>
+        </div>
+    </div>
+</div>

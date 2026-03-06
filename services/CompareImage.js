@@ -18,8 +18,9 @@ module.exports.compareImage = async (img1, img2, threshold) => {
     threshold = Number(threshold); // in case number is a string
 
     try {
-        const jimpImg1 = await Jimp.fromBuffer(Buffer.from(img1, "base64"));
-        const jimpImg2 = await Jimp.fromBuffer(Buffer.from(img2, "base64"));
+        const promises = await Promise.all([Jimp.fromBuffer(Buffer.from(img1, "base64")), Jimp.fromBuffer(Buffer.from(img2, "base64"))]);
+        const jimpImg1 = promises[0];
+        const jimpImg2 = promises[1];
 
         // TODO: add a flag to choose algo for comparing different sized images?
         const result = diff(jimpImg1, jimpImg2, threshold);
