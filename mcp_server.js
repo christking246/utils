@@ -6,6 +6,8 @@ const { decodeJwt } = require("./services/JwtDecoder.js");
 const { convertTime } = require("./services/TimeConverter.js");
 const { describeCron } = require("./services/Cron.js");
 const { formatMarkdownTable } = require("./services/Formatter.js");
+const { compareImage } = require("./services/CompareImage.js");
+const { optimizeSvg } = require("./services/SvgMinimizer.js");
 
 const server = new McpServer({
     name: "util-server",
@@ -151,6 +153,54 @@ server.registerTool(
         else {
             return {
                 content: [{ type: "text", text: "An error occurred while formatting the markdown table " + msg }]
+            }
+        }
+    }
+);
+
+server.registerTool(
+    "compare_img",
+    {
+        title: "Image Comparator",
+        description: "Compares two images and highlights the differences",
+        inputSchema: { image1: z.string().nonempty(), image2: z.string().nonempty(), threshold: z.number().optional() }
+    },
+    ({ image1, image2, threshold }) => {
+        const { success, imageDiff, msg, percent } = compareImage(image1, image2, threshold);
+        if (success) {
+            return {
+                content: [
+                    { type: "text", text: JSON.stringify({ imageDiff, percent }) }
+                ]
+            }
+        }
+        else {
+            return {
+                content: [{ type: "text", text: "An error occurred while comparing the images " + msg }]
+            }
+        }
+    }
+);
+
+server.registerTool(
+    "optimize_svg",
+    {
+        title: "SVG Optimizer",
+        description: "Optimizes SVG images for reduced file size",
+        inputSchema: { svgString: z.string().nonempty() }
+    },
+    ({ svgString }) => {
+        const { success, optimizedSvg, diff, msg } = optimizeSvg({ svgString });
+        if (success) {
+            return {
+                content: [
+                    { type: "text", text: JSON.stringify({ optimizedSvg, sizeDiff: diff }) }
+                ]
+            }
+        }
+        else {
+            return {
+                content: [{ type: "text", text: "An error occurred while optimizing the SVG image " + msg }]
             }
         }
     }

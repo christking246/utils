@@ -17,6 +17,14 @@ module.exports.compareImage = async (img1, img2, threshold) => {
 
     threshold = Number(threshold); // in case number is a string
 
+    // if the string has the base64 mime prefix, remove it
+    if (img1.split(',').length > 1) {
+        img1 = img1.split(',')[1];
+    }
+    if (img2.split(',').length > 1) {
+        img2 = img2.split(',')[1];
+    }
+
     try {
         const promises = await Promise.all([Jimp.fromBuffer(Buffer.from(img1, "base64")), Jimp.fromBuffer(Buffer.from(img2, "base64"))]);
         const jimpImg1 = promises[0];

@@ -53,9 +53,19 @@ describe("Compare image", () => {
 
     test("should return 0 percent if image is identical", async () => {
         const img1 = loadImage("./test_server_unit/compare_img1.png");
-        const img2 = loadImage("./test_server_unit/compare_img1.png");
 
-        const { success, code, threshold, percent } = await compareImage(img1, img2, "0.1");
+        const { success, code, threshold, percent } = await compareImage(img1, img1, "0.1");
+
+        expect(success).toBe(true);
+        expect(code).toBe(200);
+        expect(threshold).toBe(0.1);
+        expect(percent).toEqual(0);
+    });
+
+    test("should return success when base64 string contains mime metadata", async () => {
+        const img1 = "data:image/png;base64," + loadImage("./test_server_unit/compare_img1.png");
+
+        const { success, code, threshold, percent } = await compareImage(img1, img1, "0.1");
 
         expect(success).toBe(true);
         expect(code).toBe(200);
