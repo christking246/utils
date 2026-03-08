@@ -24,6 +24,10 @@ test.describe("Image Compare Tool", () => {
         await expect(page.locator('#threshold-value')).toBeVisible();
         await expect(page.locator('#threshold-value')).toContainText('0.25');
 
+        // Verify resize toggle is present and enabled by default
+        await expect(page.locator('#resize-toggle')).toBeVisible();
+        await expect(page.locator('#resize-toggle-input')).toBeChecked();
+
         // Verify compare button is disabled by default
         await expect(page.locator('#compare-btn')).toBeDisabled();
         await expect(page.locator('#compare-btn-text')).toContainText('Upload Both Images to Compare');
@@ -164,15 +168,46 @@ test.describe("Image Compare Tool", () => {
         const compareButton = page.locator('#compare-btn-text');
         await expect(compareButton).toContainText('Compare Images');
 
-        compareButton.click();
-
-        const resetButton = page.locator('#reset-button');
-        resetButton.click();
+        await page.locator('#compare-btn').click();
+        await page.locator('#reset-button').click();
 
         // Verify images are cleared
         await expect(page.locator('#image-preview-1')).toBeHidden();
         await expect(page.locator('#image-preview-2')).toBeHidden();
         await expect(page.locator('#upload-content-1')).toBeVisible();
         await expect(page.locator('#upload-content-2')).toBeVisible();
+
+        // Verify resize toggle is reset to enabled
+        await expect(page.locator('#resize-toggle-input')).toBeChecked();
+    });
+
+    test("resize toggle state in reset functionality", async ({ page }) => {
+        await pageSetup({ page });
+
+        // Navigate to the Image Compare tool
+        await page.click('[data-tool="image-compare"]');
+
+        // Upload images
+        const fileInput1 = page.locator('#file-input-1');
+        const fileInput2 = page.locator('#file-input-2');
+        await fileInput1.setInputFiles("./base64_test_img.png");
+        await fileInput2.setInputFiles("./base64_test_img.png");
+
+        // Change resize toggle to disabled
+        const resizeToggleInput = page.locator('#resize-toggle-input');
+        const resizeToggle = page.locator('#resize-toggle');
+        await resizeToggle.click();
+        await expect(resizeToggleInput).not.toBeChecked();
+
+        // Change threshold slider
+        const thresholdSlider = page.locator('#threshold-slider');
+        await thresholdSlider.fill('0.8');
+
+        await page.locator('#compare-btn').click();
+        await page.locator('#reset-button').click();
+
+        // Verify both resize toggle and threshold are reset to defaults
+        await expect(resizeToggleInput).toBeChecked();
+        await expect(page.locator('#threshold-value')).toContainText('0.25');
     });
 });

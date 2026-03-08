@@ -72,4 +72,17 @@ describe("Compare image", () => {
         expect(threshold).toBe(0.1);
         expect(percent).toEqual(0);
     });
+
+    test("should return success result when images are different sizes", async () => {
+        const img1 = loadImage("./test_server_unit/compare_img1.png");
+        const img2 = loadImage("./test_server_unit/compare_img_cropped.png");
+
+        const { success, code, threshold, percent, imageDiff } = await compareImage(img1, img2, 0.3);
+
+        expect(success).toBe(true);
+        expect(code).toBe(200);
+        expect(threshold).toBe(0.3);
+        expect(imageDiff).toMatch(/^data:image\/png;base64,iVBORw0KGgoAAAANSUhEUgAAB\/AAAAO6CAYAAACIRc.+AAAAAElFTkSuQmCC$/);
+        expect(percent).toBeGreaterThan(0);
+    });
 });

@@ -1,8 +1,34 @@
 const { isDefined, isNumber } = require("../utils");
+const logger = require("../logger").setup();
 
 const { Jimp, diff } = require('jimp');
 
-module.exports.compareImage = async (img1, img2, threshold) => {
+const normalizeImages = (img1, img2, shouldResize) => {
+    const { height: img1Height, width: img1Width } = img1;
+    const { height: img2Height, width: img2Width } = img2;
+
+    if ((img1Width !== img2Width || img1Height !== img2Height) && shouldResize) {
+        logger.info(`Image dimensions do not match: ${img1Width}x${img1Height} vs ${img2Width}x${img2Height}`);
+
+        // Determine the target dimensions (use the larger of the two)
+        const targetWidth = Math.max(img1Width, img2Width);
+        const targetHeight = Math.max(img1Height, img2Height);
+
+        // Create new canvases with target dimensions
+        const newImg1 = new Jimp({ width: targetWidth, height: targetHeight });
+        const newImg2 = new Jimp({ width: targetWidth, height: targetHeight });
+
+        // Copy original images at top-left (0, 0)
+        newImg1.blit({ src: img1, x: 0, y: 0 });
+        newImg2.blit({ src: img2, x: 0, y: 0 });
+
+        return [newImg1, newImg2];
+    }
+
+    return [img1, img2];
+}
+
+module.exports.compareImage = async (img1, img2, threshold, resize) => {
     if (!isDefined(img1)) {
         return { success: false, code: 400, msg: "Image 1 not provided" };
     }
@@ -27,10 +53,10 @@ module.exports.compareImage = async (img1, img2, threshold) => {
 
     try {
         const promises = await Promise.all([Jimp.fromBuffer(Buffer.from(img1, "base64")), Jimp.fromBuffer(Buffer.from(img2, "base64"))]);
-        const jimpImg1 = promises[0];
-        const jimpImg2 = promises[1];
+        let jimpImg1 = promises[0];
+        let jimpImg2 = promises[1];
 
-        // TODO: add a flag to choose algo for comparing different sized images?
+        [jimpImg1, jimpImg2] = normalizeImages(jimpImg1, jimpImg2, resize);
         const result = diff(jimpImg1, jimpImg2, threshold);
 
         return {

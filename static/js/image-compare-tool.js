@@ -117,8 +117,17 @@ function showImagePreview(file, base64, imageNumber) {
     img.src = base64;
 
     // Set image info
-    const sizeInMB = (file.size / (1024 * 1024)).toFixed(2);
-    info.textContent = `${file.name} (${sizeInMB}MB)`;
+    const sizeInMB = file.size / (1024 * 1024);
+    const sizeInKB = file.size / 1024;
+
+    let sizeText;
+    if (sizeInMB >= 1) {
+        sizeText = `${sizeInMB.toFixed(2)}MB`;
+    } else {
+        sizeText = `${sizeInKB.toFixed(1)}KB`;
+    }
+
+    info.textContent = `${file.name} (${sizeText})`;
 }
 
 function clearImage(imageNumber) {
@@ -173,6 +182,7 @@ async function compareImages() {
 
     try {
         const threshold = document.getElementById('threshold-slider').value;
+        const resize = document.getElementById('resize-toggle-input').checked;
 
         // Remove MIME prefix from base64 data before sending to API
         const img1Base64 = imageData.img1.split(',')[1];
@@ -186,7 +196,8 @@ async function compareImages() {
             body: JSON.stringify({
                 img1: img1Base64,
                 img2: img2Base64,
-                threshold: parseFloat(threshold)
+                threshold: parseFloat(threshold),
+                resize
             })
         });
 
@@ -299,6 +310,10 @@ function resetComparison() {
     const thresholdValue = document.getElementById('threshold-value');
     thresholdSlider.value = 0.25;
     thresholdValue.textContent = '0.25';
+
+    // Reset resize toggle to enabled (default)
+    const resizeToggle = document.getElementById('resize-toggle-input');
+    resizeToggle.checked = true;
 
     hideResults();
     hideError();

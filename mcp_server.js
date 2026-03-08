@@ -163,10 +163,15 @@ server.registerTool(
     {
         title: "Image Comparator",
         description: "Compares two images and highlights the differences",
-        inputSchema: { image1: z.string().nonempty(), image2: z.string().nonempty(), threshold: z.number().optional() }
+        inputSchema: {
+            image1: z.string().nonempty(),
+            image2: z.string().nonempty(),
+            threshold: z.number().optional(),
+            resize: z.boolean().optional()
+        }
     },
-    ({ image1, image2, threshold }) => {
-        const { success, imageDiff, msg, percent } = compareImage(image1, image2, threshold);
+    ({ image1, image2, threshold, resize }) => {
+        const { success, imageDiff, msg, percent } = compareImage(image1, image2, threshold, resize);
         if (success) {
             return {
                 content: [
