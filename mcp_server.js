@@ -8,6 +8,7 @@ const { describeCron } = require("./services/Cron.js");
 const { formatMarkdownTable } = require("./services/Formatter.js");
 const { compareImage } = require("./services/CompareImage.js");
 const { optimizeSvg } = require("./services/SvgMinimizer.js");
+const { extractDominantColors } = require("./services/Colors.js");
 
 const server = new McpServer({
     name: "util-server",
@@ -181,7 +182,7 @@ server.registerTool(
         }
         else {
             return {
-                content: [{ type: "text", text: "An error occurred while comparing the images " + msg }]
+                content: [{ type: "text", text: "An error occurred while comparing the images: " + msg }]
             }
         }
     }
@@ -206,6 +207,33 @@ server.registerTool(
         else {
             return {
                 content: [{ type: "text", text: "An error occurred while optimizing the SVG image " + msg }]
+            }
+        }
+    }
+);
+
+server.registerTool(
+    "extract_dominant_colors",
+    {
+        title: "Extract Dominant Colors",
+        description: "Extracts the dominant colors from an image",
+        inputSchema: {
+            image: z.string().nonempty(),
+            numColors: z.number().optional()
+        }
+    },
+    ({ image, numColors }) => {
+        const { success, colors, msg } = extractDominantColors(image, numColors);
+        if (success) {
+            return {
+                content: [
+                    { type: "text", text: JSON.stringify({ colors }) }
+                ]
+            }
+        }
+        else {
+            return {
+                content: [{ type: "text", text: "An error occurred while extracting dominant colors: " + msg }]
             }
         }
     }

@@ -8,38 +8,25 @@ global.LOG_DIR = __dirname + "/logs";
 const morganLogger = require("./logger/morganLogger");
 const logger = require("./logger/index.js").setup();
 
-// Server routes
-const mhtRouter = require("./routes/mht.js");
-const generatorsRouter = require("./routes/generators.js");
-const jwtRouter = require("./routes/jwtDecoder.js");
-const timeRouter = require("./routes/timeConverter.js");
-const serializationRouter = require("./routes/serialization.js");
-const cronRouter = require("./routes/cron.js");
-const urlHandlingRouter = require("./routes/urlHandling.js");
-const svgRouter = require("./routes/svg.js");
-const formatterRouter = require("./routes/formatter.js");
-const imageRouter = require("./routes/compareImage.js");
-
-const mcpRouter = require("./routes/mcp.js");
-
 const app = express();
 
 app.use(morganLogger);
 app.use(express.json({ limit: '50mb' }));
 app.use(["/"], express.static("static"));
 app.use("/api/ping", (_, res) => res.status(200).send({ msg: "Pong", version: global.VERSION }));
-app.use("/mcp", mcpRouter);
+app.use("/mcp", require("./routes/mcp.js"));
 
-app.use("/api/mht", mhtRouter);
-app.use("/api/generator", generatorsRouter);
-app.use("/api/jwt", jwtRouter);
-app.use("/api/time", timeRouter);
-app.use("/api/serialize", serializationRouter);
-app.use("/api/cron", cronRouter);
-app.use("/api/url", urlHandlingRouter);
-app.use("/api/svg", svgRouter);
-app.use("/api/formatter", formatterRouter);
-app.use("/api/image", imageRouter);
+app.use("/api/mht", require("./routes/mht.js"));
+app.use("/api/generator", require("./routes/generators.js"));
+app.use("/api/jwt", require("./routes/jwtDecoder.js"));
+app.use("/api/time", require("./routes/timeConverter.js"));
+app.use("/api/serialize", require("./routes/serialization.js"));
+app.use("/api/cron", require("./routes/cron.js"));
+app.use("/api/url", require("./routes/urlHandling.js"));
+app.use("/api/svg", require("./routes/svg.js"));
+app.use("/api/formatter", require("./routes/formatter.js"));
+app.use("/api/image", require("./routes/compareImage.js"));
+app.use("/api/colors", require("./routes/colors.js"));
 
 app.set("view engine", "ejs");
 app.get("/", (_, res) => res.render("index"));

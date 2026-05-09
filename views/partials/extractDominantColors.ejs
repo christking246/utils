@@ -1,0 +1,56 @@
+<div id="dominant-colors-tool" class="tool-content hidden">
+	<div class="mb-6">
+		<h2 class="text-2xl font-bold text-stone-200 mb-2">Dominant Color Extractor</h2>
+		<p class="text-stone-400">
+			Upload an image to extract its dominant colors. The most common colors will be shown as swatches and RGB/HEX values.
+		</p>
+	</div>
+
+	<!-- Upload Section -->
+	<div class="space-y-4 mb-6">
+		<label for="dominant-colors-file" class="block text-sm font-medium text-stone-300 mb-2">Select Image</label>
+		<div id="dominant-colors-drop-zone" class="border-2 border-dashed border-stone-600 bg-stone-800 rounded-lg p-6
+            text-center hover:border-sky-500 transition-colors cursor-pointer">
+			<div id="dominant-colors-upload-content" class="space-y-3">
+				<svg class="mx-auto h-12 w-12 text-stone-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+					<path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0
+                        00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" />
+				</svg>
+				<div>
+					<p class="text-stone-300">Drop your image here or</p>
+					<button type="button" class="text-sky-400 hover:text-sky-300 font-medium"
+                        onclick="document.getElementById('dominant-colors-file').click()">browse files</button>
+				</div>
+				<p class="text-sm text-stone-500">PNG, JPG, GIF up to 10MB</p>
+			</div>
+			<div id="dominant-colors-image-preview" class="hidden mt-4">
+				<img id="dominant-colors-preview-img" class="max-w-full max-h-48 mx-auto rounded" alt="Image preview">
+				<p class="mt-2 text-sm text-stone-400" id="dominant-colors-image-info"></p>
+				<button type="button" onclick="clearDominantColorsImage()" class="mt-2 text-xs text-red-400 hover:text-red-300">
+                    Remove
+                </button>
+			</div>
+		</div>
+		<input type="file" id="dominant-colors-file" class="hidden" accept="image/*">
+	</div>
+
+	<!-- Action Button -->
+	<div class="flex flex-wrap gap-2 mb-6">
+		<button id="extract-dominant-colors-btn"
+            class="px-6 py-3 bg-sky-600 hover:bg-sky-500 text-white font-medium rounded-lg cursor-pointer" disabled>
+			Extract Dominant Colors
+		</button>
+		<button onclick="clearDominantColorsResults()"
+            class="px-4 py-2 bg-stone-600 hover:bg-stone-500 text-white text-sm font-medium rounded cursor-pointer">
+			Clear
+		</button>
+	</div>
+
+	<!-- Results Section -->
+	<div id="dominant-colors-results" class="hidden mt-6">
+		<h3 class="text-lg font-semibold text-stone-200 mb-4">Dominant Colors</h3>
+		<div id="dominant-colors-swatches" class="flex flex-wrap gap-4 mb-4"></div>
+		<div id="dominant-colors-values" class="space-y-2"></div>
+	</div>
+</div>
