@@ -60,7 +60,6 @@ describe("getDominantColors", () => {
         expect(code).toBe(200);
         expect(colors).toBeDefined();
         expect(colors.length).toBe(4);
-        console.log(colors);
         expect(colors[0]).toEqual([21, 169, 133]);
         expect(colors[1]).toEqual([161, 72, 162]);
         expect(colors[2]).toEqual([254, 241, 0]);

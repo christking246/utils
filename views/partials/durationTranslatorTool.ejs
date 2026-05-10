@@ -1,0 +1,32 @@
+<div id="duration-translator-tool" class="tool-content hidden">
+    <div class="mb-6">
+        <h2 class="text-2xl font-bold text-stone-200 mb-2">Duration Translator</h2>
+        <p class="text-stone-400">
+            Convert a duration between seconds, minutes, hours, and days. Enter a value and select the unit to see the equivalent in all other units.
+        </p>
+    </div>
+
+    <!-- Input Section -->
+    <div class="flex flex-wrap gap-4 mb-6 items-end">
+        <div>
+            <label for="duration-value" class="block text-sm font-medium text-stone-300 mb-1">Value</label>
+            <input type="number" id="duration-value" class="w-32 px-3 py-2 rounded bg-stone-800 text-stone-100 border border-stone-600 focus:border-sky-500 outline-none" min="0" value="0">
+        </div>
+        <div>
+            <label for="duration-unit" class="block text-sm font-medium text-stone-300 mb-1">Unit</label>
+            <select id="duration-unit" class="w-32 px-3 py-2 rounded bg-stone-800 text-stone-100 border border-stone-600 focus:border-sky-500 outline-none">
+                <option value="second">Seconds</option>
+                <option value="minute">Minutes</option>
+                <option value="hour">Hours</option>
+                <option value="day">Days</option>
+            </select>
+        </div>
+        <button id="duration-translate-btn" class="px-6 py-3 bg-sky-600 hover:bg-sky-500 text-white font-medium rounded-lg cursor-pointer">Convert</button>
+    </div>
+
+    <!-- Results Section -->
+    <div id="duration-translate-results" class="hidden mt-6">
+        <h3 class="text-lg font-semibold text-stone-200 mb-4">Converted Duration</h3>
+        <div id="duration-translate-values" class="space-y-2"></div>
+    </div>
+</div>

@@ -41,3 +41,49 @@ module.exports.convertTime = ({ time }) => {
         timestamp: parseDate.getTime()
     }
 };
+
+module.exports.translateDuration = ({ value, unit }) => {
+    if (!isDefined(value)) {
+        return { success: false, code: 400, msg: "No value provided" };
+    }
+
+    if (!isDefined(unit)) {
+        return { success: false, code: 400, msg: "No unit provided" };
+    }
+
+    if (!isNumber(value)) {
+        return { success: false, code: 400, msg: "Value must be a number" };
+    }
+
+    if (!isValidString(unit)) {
+        return { success: false, code: 400, msg: "Unit must be a string" };
+    }
+
+    const unitLower = unit.toLowerCase();
+    const unitMap = {
+        second: 1,
+        minute: 60,
+        hour: 60 * 60,
+        day: 24 * 60 * 60
+    };
+
+    if (!unitMap[unitLower]) {
+        return { success: false, code: 400, msg: "Invalid unit provided" };
+    }
+
+    const durationS = value * unitMap[unitLower];
+
+    const days = Math.floor(durationS / (24 * 60 * 60));
+    const hours = Math.floor((durationS % (24 * 60 * 60)) / (60 * 60));
+    const minutes = Math.floor((durationS % (60 * 60)) / 60);
+    const seconds = durationS % 60;
+
+    return {
+        success: true,
+        seconds: durationS,
+        minutes: durationS / 60,
+        hours: durationS / (60 * 60),
+        days: durationS / (24 * 60 * 60),
+        full: `${days} day${days !== 1 ? 's' : ''}, ${hours} hour${hours !== 1 ? 's' : ''}, ${minutes} minute${minutes !== 1 ? 's' : ''}, ${seconds} second${seconds !== 1 ? 's' : ''}`
+    }
+};

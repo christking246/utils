@@ -1,6 +1,6 @@
 const { describe, expect, test } = require("@jest/globals");
 
-const { convertTime } = require("../services/TimeConverter");
+const { convertTime, translateDuration } = require("../services/TimeConverter");
 
 describe("time converter", () => {
     describe("convertTime", () => {
@@ -89,6 +89,40 @@ describe("time converter", () => {
             expect(result.iso).toBe(expectedIso);
             expect(result.utc).toBe(expectedUtc);
             expect(result.timestamp).toBe(expectedTimestamp);
+        });
+    });
+
+    describe("translateDuration", () => {
+        // Test cases for no input/invalid input
+        test.each([
+            ["value is null", null, "second", "No value provided"],
+            ["value is undefined", undefined, "second", "No value provided"],
+            ["unit is null", 1, null, "No unit provided"],
+            ["unit is undefined", 1, undefined, "No unit provided"],
+            ["invalid unit", 1, "invalid unit", "Invalid unit provided"],
+            ["empty string", 1, "", "Unit must be a string"],
+            ["invalid unit", 1, "invalid unit", "Invalid unit provided"],
+        ])("should return error when %s", (description, value, unit, expectedMsg) => {
+            const result = translateDuration({ value: value, unit: unit });
+            expect(result.success).toBe(false);
+            expect(result.msg).toBe(expectedMsg);
+        });
+
+        // Test cases for valid input
+        test.each([
+            [ "1 minute", 1, "minute", 60 ],
+            [ "2 hours", 2, "hour", 7200 ],
+            [ "1 day", 1, "day", 86400 ],
+            [ "90 seconds", 90, "second", 90 ],
+            [ "1.5 minutes", 1.5, "minute", 90 ]
+        ])("should convert %s", (description, value, unit, expectedSeconds) => {
+            const result = translateDuration({ value: value, unit: unit });
+
+            expect(result.success).toBe(true);
+            expect(result.seconds).toBe(expectedSeconds);
+            expect(result.minutes).toBe(expectedSeconds / 60);
+            expect(result.hours).toBe(expectedSeconds / 3600);
+            expect(result.days).toBe(expectedSeconds / 86400);
         });
     });
 });

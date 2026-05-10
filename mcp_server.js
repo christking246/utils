@@ -3,7 +3,7 @@ const { z } = require("zod");
 
 const { generateHashes, generateGuid } = require("./services/Generators.js");
 const { decodeJwt } = require("./services/JwtDecoder.js");
-const { convertTime } = require("./services/TimeConverter.js");
+const { convertTime, translateDuration } = require("./services/TimeConverter.js");
 const { describeCron } = require("./services/Cron.js");
 const { formatMarkdownTable } = require("./services/Formatter.js");
 const { compareImage } = require("./services/CompareImage.js");
@@ -234,6 +234,33 @@ server.registerTool(
         else {
             return {
                 content: [{ type: "text", text: "An error occurred while extracting dominant colors: " + msg }]
+            }
+        }
+    }
+);
+
+server.registerTool(
+    "duration_translator",
+    {
+        title: "Duration Translator",
+        description: "Translates a duration into various units",
+        inputSchema: {
+            value: z.number().nonnegative(),
+            unit: z.string().nonempty()
+        }
+    },
+    ({ value, unit }) => {
+        const { success, seconds, minutes, hours, days, full, msg } = translateDuration({ value, unit });
+        if (success) {
+            return {
+                content: [
+                    { type: "text", text: JSON.stringify({ seconds, minutes, hours, days, full }) }
+                ]
+            }
+        }
+        else {
+            return {
+                content: [{ type: "text", text: "An error occurred while translating duration: " + msg }]
             }
         }
     }
